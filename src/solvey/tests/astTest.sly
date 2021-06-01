@@ -1,1 +1,2 @@
-list myList
+string myString
+myString = "some" + "thing"

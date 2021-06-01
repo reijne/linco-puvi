@@ -8,18 +8,18 @@ import solvey::syntax_concrete;
 data Boolean = b_true() 
 						| b_false();
 
-data Program = program(list[Snippet] snippets);
+data Program = program(list[Stmt] statements);
 
-data Snippet = declSnip(Decl decl)
-						| stmtSnip(Stmt stmt);
+//data Snippet = declSnip(Decl decl)
+//						| stmtSnip(Stmt stmt);
 
-data Block = block(list[Snippet] snippets);
+data Block = block(list[Stmt] statements);
 
 data Type = t_str() | t_num() | t_bool() | t_list();
 
 //data WhiteSpace = space(list[str] spacing);
 
-data Decl = decl(Type datatype, str id);
+//data Decl = decl(Type datatype, str id);
 				  
 //data Decl = strDecl(str datatype, str, id, Expr expr)
 //				  | numDecl(str datatype, str, id, Expr expr)
@@ -59,6 +59,7 @@ data Expr = idExpr(str id)
 				  ;
 
 data Stmt = exprStmt(Expr expr)
+				   | decl(Type datatype, str id)
 				   | returnStmt(Expr expr)
 				   | assStmt(str id, Expr expr)
 				   | inputStmt()
@@ -67,7 +68,7 @@ data Stmt = exprStmt(Expr expr)
 				   | ifElseStmt(Expr cond, Block thenBlock, Block elseBlock)
 				   | repeatStmt(int iter, Block block)
 				   | whileStmt(Expr cond, Block block)
-				   | funDef(str datatype, str id, list[Parameter] parameters, Block block);
+				   | funDef(Type datatype, str id, list[Parameter] parameters, Block block);
 
 data Parameter = parameter(str datatype, str id);
 
@@ -87,7 +88,7 @@ data Arguments =arguments(list[Expr] exprs);
 anno loc ID@location;
 
 anno loc Program@location;
-anno loc Snippet@location;
+//anno loc Snippet@location;
 anno loc Block@location;
 
 anno loc Expr@location;

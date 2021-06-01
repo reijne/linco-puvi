@@ -35,19 +35,19 @@ lexical Comment
 //layout Whitespace = whitespace: [\t-\n\r\ ]* spacing ; // << already imported
 
 // Program syntax
-start syntax Program = program: Snippet* snippets;
+start syntax Program = program: Stmt* statements;
 
 // Snippet intermediate either decl or stmt
-syntax Snippet = declSnip: Decl decl 
-						   | stmtSnip: Stmt stmt;
+//syntax Snippet = declSnip: Decl decl 
+//						   | stmtSnip: Stmt stmt;
 
 // Block of code
-syntax Block = block: Snippet* snippets;
+syntax Block = block: Stmt* statements;
 
 syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
 
 // Declaration of a variable type
-syntax Decl = decl: Type datatype ID id;
+//syntax Decl = 
 					  //|  decl: "number" datatype ID id
 					  //|  decl: "bool" datatype ID id;
 
@@ -100,6 +100,7 @@ syntax Expr = idExpr: ID id !>> "("
 
 // All possible statements
 syntax Stmt = exprStmt: Expr expr
+					   | decl: Type datatype ID id
 					   | returnStmt: "return" Expr expr
 					   | assStmt: ID id "=" Expr expr
 					   | inputStmt: "input" "(" ")"
@@ -134,9 +135,9 @@ keyword Keyword = "string" | "number" | "bool" | "list" |
 // Keep track of the locations in the code
 anno loc ID@location;
 
-anno loc Program@location;
-anno loc Snippet@location;
-anno loc Block@location;
+//anno loc Program@location;
+//anno loc Snippet@location;
+//anno loc Block@location;
 
 anno loc Expr@location;
 anno loc Stmt@location;

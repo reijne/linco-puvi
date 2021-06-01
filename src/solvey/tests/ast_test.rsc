@@ -115,5 +115,5 @@ test bool functionCall() {
 }
 
 test bool inoutput() {
-	return buildLines("IO time", ["input()", "output(\"hello world\""]);
+	return buildLines("IO time", ["input()", "output(\"hello world\")"]);
 }
