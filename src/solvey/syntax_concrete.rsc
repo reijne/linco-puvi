@@ -1,4 +1,4 @@
-module solvey::Syntax
+module solvey::syntax_concrete
 
 import ParseTree;
 
@@ -9,17 +9,16 @@ extend lang::std::Id;
 //  = id: ([a-zA-Z_$] [a-zA-Z0-9_$]* !>> [a-zA-Z0-9_$]) sval \ Keyword;
 
 // Types of the solvey language
-lexical String = string: "\"" ![\"]*  "\"";
-lexical Number 
- 	= 	number: [0-9]+val
-	 |  number: [0-9]+"."[0-9]+val;
-lexical Boolean = boolean: "true" | "false";
+lexical String = "\"" ![\"]*  "\"";
+//lexical Number = @category="Value" ([0-9]+([.][0-9]+?)?);
+lexical Number = [0-9]+
+	 					   |  [0-9]+"."[0-9]+;
+	 					   
+syntax Boolean = b_true: "true"
+							| b_false: "false";
 
 // Identifier cannot be a defined keyword.
 lexical ID = Id \ Keyword;
-
-// Ending a statement or definition
-lexical End = "end";
 
 // Borrowed from Riemer ;)
 layout LAYOUTLIST
@@ -31,7 +30,7 @@ lexical LAYOUT
   
 lexical Comment
   = "/*" (![*] | [*] !>> [/])* "*/" 
-  | "//" ![\n]* [\n];
+  | "//" ![\n]* $;
 
 //layout Whitespace = whitespace: [\t-\n\r\ ]* spacing ; // << already imported
 
@@ -39,15 +38,13 @@ lexical Comment
 start syntax Program = program: Snippet* snippets;
 
 // Snippet intermediate either decl or stmt
-syntax Snippet = snippet: Decl decl 
-						   | snippet: Stmt stmt;
+syntax Snippet = declSnip: Decl decl 
+						   | stmtSnip: Stmt stmt;
 
 // Block of code
 syntax Block = block: Snippet* snippets;
 
-syntax Type = string:"string" 
-					  | number: "number" 
-					  | boolean: "bool";
+syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
 
 // Declaration of a variable type
 syntax Decl = decl: Type datatype ID id;
@@ -57,13 +54,23 @@ syntax Decl = decl: Type datatype ID id;
 //syntax Decl = strDecl: "string" datatype ID id "=" Expr expr
 //					  |  numDecl: "number" datatype ID id "=" Expr expr
 //					  |  boolDecl: "bool" datatype ID id "=" Expr expr;
+//syntax Arguments = noargs: "(" >> ")" 
+//								  | arguments: "(" Expr arg1 ("," Expr)* ")"argrest;
+//syntax Arguments = arguments:{Expr ","}* args;
+
+//syntax Items = emptyList: "[" "]" 
+//						| items: "[" Expr item1 ("," Expr)* items "]" ;
+//noArgs: ""
+//								  |  oneArg: Expr
+//								  |  arguments: (Expr ",")*;
 
 // All possible expressions
-syntax Expr = idExpr: ID id
-					  > strExpr: String string
-					  > numExpr: Number number
-					  > boolExpr: Boolean boolean
-					  > funCall: Id id "(" Arguments args ")"
+syntax Expr = idExpr: ID id !>> "("
+					  | strExpr: String string
+					  | numExpr: Number number
+					  | boolExpr: Boolean boolean
+					  | listExpr: "[" {Expr ","}* items "]"
+					  | funCall: ID id "(" {Expr ","}* args")"
 					  > bracketExpr: "(" Expr e ")"
 					  
 					  > left ( left powExpr: Expr lhs "**" Expr rhs
@@ -95,12 +102,13 @@ syntax Expr = idExpr: ID id
 syntax Stmt = exprStmt: Expr expr
 					   | returnStmt: "return" Expr expr
 					   | assStmt: ID id "=" Expr expr
-					   | ifStmt: "if" "(" Expr cond ")"  Block block End "if"
-					   | repeatStmt: "repeat" "(" Number iter")" Block block End "repeat"
-					   | whileStmt: "while" "(" Expr cond ")"  Block block End "while"
-					   | funDef: Type datatype "function" ID id "(" Parameters parameters ")"  Block block End "function";
-
-syntax Arguments = ID*;
+					   | inputStmt: "input" "(" ")"
+					   | outputStmt: "output" "(" Expr expr ")"
+					   | ifStmt: "if" "(" Expr cond ")"  Block block "end" "if"
+					   | ifElseStmt: "if" "(" Expr cond ")"  Block thenBlock "else" Block elseBlock "end" "if"
+					   | repeatStmt: "repeat" "(" Number iter ")" Block block "end" "repeat"
+					   | whileStmt: "while" "(" Expr cond ")"  Block block "end" "while"
+					   | funDef: Type datatype "function" ID id "(" Parameters parameters ")"  Block block "end" "function";
 
 syntax Parameters = Parameter*;
 
@@ -112,8 +120,9 @@ syntax Parameter = parameter: Type datatype ID id;
 //syntax If_stmt = ifStmt: "if" "(" Expr cond ")" "{" Block block"}";
 //syntax Repeat_stmt = repeatStmt: "repeat" "(" Number iter")" "{" Block block"}";
 
-keyword Keyword = 	"string" | "number" | "bool" | 
+keyword Keyword = "string" | "number" | "bool" | "list" |
 									"function" | "end" | "return" | 
+									"input" | "output" |
 									"if" | "else" | "repeat" | "while" | 
 									"and" | "or" | "not" |
 									"&&" | "||" | "!" |

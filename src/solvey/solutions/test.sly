@@ -24,15 +24,17 @@ bool bol3
 bol3 = false && true
 bool bol4 
 bol4 = false and true
+bool bol5
+bol5 = !true
 
 bool comp
+comp = 1 > 2
 bool comp2
+comp2 = 1 >= 2
 bool comp3
+comp3 = 1 < 2
 bool comp4
-comp = x > y
-comp2 = x >= y
-comp3 = x < y
-comp4 = x >= y
+comp4 = 1 >= 2
 
 if (comp == comp2)
 	comp2 = !comp
@@ -48,13 +50,12 @@ bool succ
 succ = true
 
 while (succ)
-	x = x + 2
-	if (succ > 4)
-		succ = false
-	end if
+	x = x + 1
 end while
 
 bool function isDivisiblebyThree(number x)
 	return x % 3 == 0
 end function
+
+isDivisiblebyThree(3)
 	
