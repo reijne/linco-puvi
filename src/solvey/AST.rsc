@@ -1,21 +1,27 @@
+// Abstract syntax tree for Solvey DSL.
+// Author: Youri Reijne
+//
+// NOTE** Utilise double slash "//" at the end of a line to exclude it from the mapping in Showey
+
 module solvey::ast
 
 import ParseTree;
 import solvey::syntax_concrete;
 
-//data TYPE = string() | number() | boolean();
-
 data Boolean = b_true() 
 						| b_false();
 
-data Program = program(list[Stmt] statements);
+data Program = program(list[Stmt] statements); // <- Exclude from visualisation mapping
 
 //data Snippet = declSnip(Decl decl)
 //						| stmtSnip(Stmt stmt);
 
-data Block = block(list[Stmt] statements);
+data Block = block(list[Stmt] statements); // <- Exclude from visualisation mapping
 
-data Type = t_str() | t_num() | t_bool() | t_list();
+data Type = t_str() 
+				   | t_num() 
+				   | t_bool() 
+				   | t_list();
 
 //data WhiteSpace = space(list[str] spacing);
 
@@ -72,7 +78,7 @@ data Stmt = exprStmt(Expr expr)
 
 data Parameter = parameter(str datatype, str id);
 
-data Arguments =arguments(list[Expr] exprs);
+data Arguments = arguments(list[Expr] exprs);
 //noArgs()
 //							  | oneArg(Expr expr) 
 //							  | nArgs(list[Expr]);
@@ -95,4 +101,4 @@ anno loc Expr@location;
 anno loc Stmt@location;
 
 
-public Program sly_build(loc file) = implode(#Program, sly_parse(file));
+public Program sly_build(loc file) = implode(#Program, sly_parse(file)); // <- Exclude from visualisation mapping

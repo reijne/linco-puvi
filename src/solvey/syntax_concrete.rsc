@@ -102,7 +102,7 @@ syntax Expr = idExpr: ID id !>> "("
 syntax Stmt = exprStmt: Expr expr
 					   | decl: Type datatype ID id
 					   | returnStmt: "return" Expr expr
-					   | assStmt: ID id "=" Expr expr
+					   | assStmt: ID id ":=" Expr expr
 					   | inputStmt: "input" "(" ")"
 					   | outputStmt: "output" "(" Expr expr ")"
 					   | ifStmt: "if" "(" Expr cond ")"  Block block "end" "if"
@@ -142,11 +142,8 @@ anno loc ID@location;
 anno loc Expr@location;
 anno loc Stmt@location;
 
-public start[Program] sly_parse(str input, loc file) = 
-  parse(#start[Program], input, file);
+public start[Program] sly_parse(str input, loc file) = parse(#start[Program], input, file);
   
-public start[Program] sly_parse(loc file) = 
-  parse(#start[Program], file);
+public start[Program] sly_parse(loc file) = parse(#start[Program], file);
   
- public Tree sly_parse_tree(loc file) = 
-  parse(#start[Program], file);
+ public Tree sly_parse_tree(loc file) = parse(#start[Program], file);
