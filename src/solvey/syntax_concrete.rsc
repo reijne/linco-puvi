@@ -11,8 +11,8 @@ extend lang::std::Id;
 // Types of the solvey language
 lexical String = "\"" ![\"]*  "\"";
 //lexical Number = @category="Value" ([0-9]+([.][0-9]+?)?);
-lexical Number = [0-9]+
-	 					   |  [0-9]+"."[0-9]+;
+lexical Number = [0-9]+;
+	 					   //|  [0-9]+"."[0-9]+;
 	 					   
 syntax Boolean = b_true: "true"
 							| b_false: "false";
@@ -134,10 +134,6 @@ keyword Keyword = "string" | "number" | "bool" | "list" |
 									
 // Keep track of the locations in the code
 anno loc ID@location;
-
-//anno loc Program@location;
-//anno loc Snippet@location;
-//anno loc Block@location;
 
 anno loc Expr@location;
 anno loc Stmt@location;

@@ -4,7 +4,6 @@ General Direction = +x
 Camera {
 	mode = static
 	direction = N
-	forwardbackward = 1
 }
 
 Blocky b1 = [ 

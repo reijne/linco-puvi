@@ -9,19 +9,19 @@ import ParseTree;
 import solvey::syntax_concrete;
 
 data Boolean = b_true() 
-						| b_false();
+						| b_false(); 
 
-data Program = program(list[Stmt] statements); // <- Exclude from visualisation mapping
+data Program = program(list[Stmt] statements); // <- Exclude from visualisation mapping 
 
 //data Snippet = declSnip(Decl decl)
 //						| stmtSnip(Stmt stmt);
 
-data Block = block(list[Stmt] statements); // <- Exclude from visualisation mapping
+data Block = block(list[Stmt] statements); // <- Exclude from visualisation mapping 
 
 data Type = t_str() 
-				   | t_num() 
+				   | t_num()  
 				   | t_bool() 
-				   | t_list();
+				   | t_list(); 
 
 //data WhiteSpace = space(list[str] spacing);
 
@@ -38,47 +38,47 @@ data Type = t_str()
 //data Items = emptyList()
 //					| items(Expr item1, list[Expr] items);
 
-data Expr = idExpr(str id)
-				  | strExpr(str string)
-				  | numExpr(int number)
-				  | boolExpr(Boolean boolean)
-				  | listExpr(list[Expr]  items)
-				  | funCall(str id, list[Expr] args)
+data Expr = idExpr(str id) 
+				  | strExpr(str string) 
+				  | numExpr(int number) 
+				  | boolExpr(Boolean boolean) 
+				  | listExpr(list[Expr]  items) 
+				  | funCall(str id, list[Expr] args) 
 				  //| bracketExp(Expr expr)
 				  
-				  | powExpr(Expr lhs, Expr rhs)
-				  | mulExpr(Expr lhs, Expr rhs)
-				  | divExpr(Expr lhs, Expr rhs)
-				  | modExpr(Expr lhs, Expr rhs)
-				  | addExpr(Expr lhs, Expr rhs)
-				  | minExpr(Expr lhs, Expr rhs)
+				  | powExpr(Expr lhs, Expr rhs) 
+				  | mulExpr(Expr lhs, Expr rhs) 
+				  | divExpr(Expr lhs, Expr rhs) 
+				  | modExpr(Expr lhs, Expr rhs) 
+				  | addExpr(Expr lhs, Expr rhs) 
+				  | minExpr(Expr lhs, Expr rhs) 
 				  
-				  | andExpr(Expr lhs, Expr rhs)
-				  | orExpr(Expr lhs, Expr rhs)
-				  | notExpr(Expr expr)
+				  | andExpr(Expr lhs, Expr rhs) 
+				  | orExpr(Expr lhs, Expr rhs) 
+				  | notExpr(Expr expr) 
 				  
-				  | eqExpr(Expr lhs, Expr rhs)
-				  | gtExpr(Expr lhs, Expr rhs)
-				  | gteExpr(Expr lhs, Expr rhs)
-				  | ltExpr(Expr lhs, Expr rhs)
-				  | lteExpr(Expr lhs, Expr rhs)
+				  | eqExpr(Expr lhs, Expr rhs) 
+				  | gtExpr(Expr lhs, Expr rhs) 
+				  | gteExpr(Expr lhs, Expr rhs) 
+				  | ltExpr(Expr lhs, Expr rhs) 
+				  | lteExpr(Expr lhs, Expr rhs) 
 				  ;
 
-data Stmt = exprStmt(Expr expr)
-				   | decl(Type datatype, str id)
-				   | returnStmt(Expr expr)
-				   | assStmt(str id, Expr expr)
-				   | inputStmt()
-				   | outputStmt(Expr expr)
-				   | ifStmt(Expr cond, Block block)
-				   | ifElseStmt(Expr cond, Block thenBlock, Block elseBlock)
-				   | repeatStmt(int iter, Block block)
-				   | whileStmt(Expr cond, Block block)
-				   | funDef(Type datatype, str id, list[Parameter] parameters, Block block);
+data Stmt = exprStmt(Expr expr) 
+				   | decl(Type datatype, str id) 
+				   | returnStmt(Expr expr) 
+				   | assStmt(str id, Expr expr) 
+				   | inputStmt() 
+				   | outputStmt(Expr expr) 
+				   | ifStmt(Expr cond, Block block) 
+				   | ifElseStmt(Expr cond, Block thenBlock, Block elseBlock) 
+				   | repeatStmt(int iter, Block block) 
+				   | whileStmt(Expr cond, Block block) 
+				   | funDef(Type datatype, str id, list[Parameter] parameters, Block block); 
 
-data Parameter = parameter(str datatype, str id);
+data Parameter = parameter(str datatype, str id); 
 
-data Arguments = arguments(list[Expr] exprs);
+//data Arguments = arguments(list[Expr] exprs);
 //noArgs()
 //							  | oneArg(Expr expr) 
 //							  | nArgs(list[Expr]);
@@ -91,14 +91,14 @@ data Arguments = arguments(list[Expr] exprs);
 //anno loc Number@location;
 //anno loc Boolean@location;
 
-anno loc ID@location;
-
-anno loc Program@location;
-//anno loc Snippet@location;
-anno loc Block@location;
-
-anno loc Expr@location;
-anno loc Stmt@location;
+//anno loc ID@location;
+//
+//anno loc Program@location;
+//
+//anno loc Block@location;
+//
+//anno loc Expr@location;
+//anno loc Stmt@location;
 
 
 public Program sly_build(loc file) = implode(#Program, sly_parse(file)); // <- Exclude from visualisation mapping
