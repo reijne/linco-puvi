@@ -44,7 +44,7 @@ public void genTraverser() {
 }
 
 @doc {
-	Add an entry point for the traversal that is public and thus accesible through import.
+	Add an entry point for the traversal that is public and thus accesible through import. 
 }
 private str addEntryPoint(str content) {
 	return content + "public str startLabeledTraverse(Program p) = labeledTraverse(p);\n";
