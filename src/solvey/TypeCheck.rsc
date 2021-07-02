@@ -1,4 +1,4 @@
-module solvey::TypeChecker
+module solvey::TypeCheck
 
 import Prelude;
 import solvey::AST;

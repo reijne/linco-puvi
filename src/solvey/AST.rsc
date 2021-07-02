@@ -3,10 +3,10 @@
 //
 // NOTE** Utilise double slash "//" at the end of a line to exclude it from the mapping in Showey
 
-module solvey::ast
+module solvey::AST
 
 import ParseTree;
-import solvey::syntax_concrete;
+import solvey::ConcreteSyntax;
 
 data Boolean = b_true() 
 						| b_false(); 
@@ -44,7 +44,7 @@ data Expr = idExpr(str id)
 				  | boolExpr(Boolean boolean) 
 				  | listExpr(list[Expr]  items) 
 				  | funCall(str id, list[Expr] args) 
-				  //| bracketExp(Expr expr)
+				  | bracketExpr(Expr expr)
 				  
 				  | powExpr(Expr lhs, Expr rhs) 
 				  | mulExpr(Expr lhs, Expr rhs) 

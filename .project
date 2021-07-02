@@ -39,17 +39,17 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src/machine/machine-AST.rsc</name>
+			<name>src/ZZZEXmachine/machine-AST.rsc</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-AST.rsc</locationURI>
 		</link>
 		<link>
-			<name>src/machine/machine-IDE.rsc</name>
+			<name>src/ZZZEXmachine/machine-IDE.rsc</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-IDE.rsc</locationURI>
 		</link>
 		<link>
-			<name>src/machine/machine-Syntax.rsc</name>
+			<name>src/ZZZEXmachine/machine-Syntax.rsc</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-Syntax.rsc</locationURI>
 		</link>

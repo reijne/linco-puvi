@@ -1,11 +1,11 @@
-module solvey::tests::ast_test
+module solvey::tests::AST
 
 import IO;
 import Boolean;
 import Exception;
 
-import solvey::syntax_concrete;
-import solvey::ast;
+import solvey::ConcreteSyntax;
+import solvey::AST;
 
 loc testDir = |project://puzzley/src/solvey/tests|;
 loc testFile;
@@ -25,8 +25,9 @@ bool buildLine(str line) {
 	try {
 		writeFile(testFile, line);
 		Program ast = sly_build(testFile);
-	} catch RuntimeException(): {
+	} catch e: {
 		success = false;
+		print(e);
 	};
 	return success;
 }
@@ -57,41 +58,41 @@ test bool declarations() {
 }
 
 test bool listCreation() {
-	return buildLines("listCreation", ["x = []", "x = [1,2]", "x = [1+1]"]);
+	return buildLines("listCreation", ["x := []", "x := [1,2]", "x := [1+1]"]);
 }
 
 test bool arithmetics() {
 	return buildLines("Arithmetic and Assignment", ["2+2",
-															"x = 1 ** 2",
-															"x = num1 ^ num2",
-															"x = num1 * num2",
-															"x = num1 / num2",
-															"x = num1 % num2",
-															"x = num1 + num2",
-															"x = num1 - num2"]);
+															"x := 1 ** 2",
+															"x := num1 ^ num2",
+															"x := num1 * num2",
+															"x := num1 / num2",
+															"x := num1 % num2",
+															"x := num1 + num2",
+															"x := num1 - num2"]);
 }
 
 test bool stringConcat() {
-	return buildLines("String Concatenation", ["string myString\nmyString = \"some\" + \"thing\""]);
+	return buildLines("String Concatenation", ["string myString\nmyString := \"some\" + \"thing\""]);
 }
 
 test bool boolOperators() {
-	return buildLines("Boolean Operators", ["bool bol\nbol = false || true",
-																			"bool bol2\nbol2 = false or true",
-																			"bol bol3\nbool3 = false && true",
-																			"bol bol4\nbool4 = false and true",
-																			"bol bol5\nbool5 = !true"]);
+	return buildLines("Boolean Operators", ["bool bol\nbol := false || true",
+																			"bool bol2\nbol2 := false or true",
+																			"bol bol3\nbool3 := false && true",
+																			"bol bol4\nbool4 := false and true",
+																			"bol bol5\nbool5 := !true"]);
 }
 
 test bool boolComparison() {
-	return buildLines("Boolean Comparison", ["bool comp\ncomp = 1 \> 2",
-																				"bool comp2\ncomp2 = 1 \>= 2",
-																				"bool comp3\ncomp3 = 1 \< 2",
-																				"bool comp4\ncomp4 = 1 \>= 2"]);
+	return buildLines("Boolean Comparison", ["bool comp\ncomp := 1 \> 2",
+																				"bool comp2\ncomp2 := 1 \>= 2",
+																				"bool comp3\ncomp3 := 1 \< 2",
+																				"bool comp4\ncomp4 := 1 \>= 2"]);
 }
 
 test bool ifStatement() {
-	return buildLines("If statement", ["if (comp == comp2)\n\tcomp2 = !comp\nend if"]);
+	return buildLines("If statement", ["if (comp == comp2)\n\tcomp2 := !comp\nend if"]);
 }
 
 test bool ifelseStatement() {
@@ -99,11 +100,11 @@ test bool ifelseStatement() {
 }
 
 test bool repeatStatement() {
-	return buildLines("Repeat statement", ["repeat (9)\n\tx = x+1\nend repeat"]);
+	return buildLines("Repeat statement", ["repeat (9)\n\tx := x+1\nend repeat"]);
 }
 
 test bool whileStatement() {
-	return buildLines("While statement", ["while (succ)\n\tx = x + 1\nend while"]);
+	return buildLines("While statement", ["while (succ)\n\tx := x + 1\nend while"]);
 }
 
 test bool functionDefinition() {
@@ -112,6 +113,10 @@ test bool functionDefinition() {
 
 test bool functionCall() {
 	return buildLines("Function call", ["\nfunc()","func(x)","func(2)","func(3+3)","func(4\>2)"]);
+}
+
+test bool bracketExpr() {
+	return buildLines("Bracket Expression", ["(2)","(2+2)","two := (2)"]);
 }
 
 test bool inoutput() {

@@ -1,24 +1,23 @@
-module nodeExtractor
+module solvey::NodeExtractor
 
 import IO;
+import List;
+import Type;
+import Node;
 import String;
 
-import Node;
-import List;
-import Map;
-import Type;
-import solvey::ast;
+import solvey::AST;
 
 import util::Benchmark;
 import util::Math;
 
-public loc standardSolvey = |project://puzzley/src/solvey/ast.rsc|;
+public loc standardSolvey = |project://puzzley/src/solvey/AST.rsc|;
 
 @doc {
 	Compare the execution times for the different methods of AST node extraction.
 }
 public void timer() {
-	for (iter <- [n*n  | int n <- [10, 100, 200, 500, 1000]]) {		
+	for (iter <- [100, 1000, 10000, 100000]) {		
 		int starter = realTime();
 		for (_ <- [0 .. iter]) {
 			getSolveyASTNodesString(standardSolvey);
@@ -28,11 +27,11 @@ public void timer() {
 		
 		starter = realTime();
 		for (_ <- [0 .. iter]) {
-			getSolveyASTNodesVisit();
+			getNodes();
 		}
 		end = realTime();
 		int lasty = end-starter;
-		print("Iterations: "); 			print(iter);
+		print("Calls: "); 			print(iter);
 		print("\nString method:"); 	print(firsty);
 		print("\nVisit method: "); 	print(lasty);
 		print("\n" + "======\n");
@@ -42,74 +41,44 @@ public void timer() {
 }
 
 @doc {
-	Get all the AST nodes for the solvey language #Program type
+	Get the hierarchical AST nodes for the solvey language type #Program in a string.
 }
-public str getSolveyASTNodesVisit() {
-	set[node] constructors = getConstructors();
-	categorisedMap = ();
-	children = ();
-	for(c <- constructors) {
-		cate = "";
-		constructor = c[0];
-		visit(constructor) {
-			case \label(consName, categoryADT): {
-				visit(categoryADT) {
-					case \adt(gory, _): cate = gory;
-				}
-				categorisedMap = initialisedAdd(categorisedMap, cate, consName);
-				childList = c[1];
-				visit(childList) {
-					case \label(childName, childCateADT): {
-						visit (childCateADT) {
-							case \adt(gory, _): children = initialisedAdd(children, consName, gory + "_" + childName);
-							case \int(): children = initialisedAdd(children, consName, "int_" + childName);
-							case \str(): children = initialisedAdd(children, consName, "str_" + childName);
-						}
-					}
-				}				
+public str getNodes() {
+	categoryNodeMap = ();
+	nodeChildrenMap = ();
+	visit (#Program) {
+		case cons(label(nodeName,adt(cateName,[])),children,[],{}): {
+			categoryNodeMap = initialisedAdd(categoryNodeMap, cateName, nodeName);
+			visit (children) {
+				case label(childName, adt(childType, [])):
+					nodeChildrenMap = initialisedAdd(nodeChildrenMap, nodeName, childType+"_"+childName);
+				case label(childName, \list(adt(childType, []))): 
+					nodeChildrenMap = initialisedAdd(nodeChildrenMap, nodeName, "list["+childType+"]_"+childName);
 			}
 		}
 	}
-	return stringifyNodes(categorisedMap, children);	
+	return stringifyNodes(categoryNodeMap, nodeChildrenMap);
 }
 
 @doc {
 	Create a string from all the categories, AST nodes and children
 }
-private str stringifyNodes(map[str, list[str]] categorisedMap, map[str, list[str]] children) {
+private str stringifyNodes(map[str, list[str]] categoryNodeMap, map[str, list[str]] nodeChildrenMap) {
 	str stringy = "";
-	for (category <- categorisedMap) {
+	for (category <- categoryNodeMap) {
 		stringy += category + " category\n" ;
-		for (constructor <- categorisedMap[category]) {
-			stringy += constructor;
-			if (constructor in children && size(children[constructor]) > 0) {
+		for (noden <- categoryNodeMap[category]) {
+			stringy += noden;
+			if (noden in nodeChildrenMap && size(nodeChildrenMap[noden]) > 0) {
 				stringy += "{\n";
-				for (chil <- children[constructor]) stringy += chil + "\n";
+				for (child <- nodeChildrenMap[noden]) stringy += child + "\n";
 				stringy += "}\n";
 			}  else {
 				stringy += "{}\n";
 			}
 		}
 	}
-	print(stringy);
 	return stringy;
-}
-
-@doc {
-	Get the constructors for the Solvey #Program type.
-}
-private set[node] getConstructors() {
-	constructors = {};
-	visit(#Program) {
-		case node N: {
-			switch(getName(N)) {
-				case "cons": constructors += N;
-				default: ;
-			}
-		}
-		default: ; 
-	}
-	return constructors;
 }
 
 @doc {

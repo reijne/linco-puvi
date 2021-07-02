@@ -1,4 +1,4 @@
-module solvey::syntax_concrete
+module solvey::ConcreteSyntax
 
 import ParseTree;
 
