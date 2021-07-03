@@ -5,27 +5,28 @@
 module solvey::Traverser
 import solvey::AST;
 
-public str startLabeledTraverse(Program p) = labeledTraverse(p);
+public str startLabeledTraverse(program(list[Stmt] statements)) = "<for (stmt <- statements) {><labeledTraverse(stmt)>\n<}>"[..-1];
+
 private str labeledTraverse(t_list()) = 
-    "in_Type_t_list
-    out_Type_t_list";
+"in_Type_t_list
+out_Type_t_list";
 
 private str labeledTraverse(t_str()) = 
-    "in_Type_t_str
-    out_Type_t_str";
+"in_Type_t_str
+out_Type_t_str";
 
 private str labeledTraverse(t_num()) = 
-    "in_Type_t_num
-    out_Type_t_num";
+"in_Type_t_num
+out_Type_t_num";
 
 private str labeledTraverse(t_bool()) = 
-    "in_Type_t_bool
-    out_Type_t_bool";
+"in_Type_t_bool
+out_Type_t_bool";
 
 private str labeledTraverse(funCall(str id,list[Expr] args))  =
 "in_Expr_funCall
-_in_Expr_args
-"+"<for (argsItem <- args){><labeledTraverse(argsItem)>\n<}>"[..-1]+"
+_in_list[Expr]_args
+"+"<for (argsItem <- args) {><labeledTraverse(argsItem)>\n<}>"[..-1]+"
 _out_Expr_args
 out_Expr_funCall";
 
@@ -153,8 +154,8 @@ out_Expr_gteExpr";
 
 private str labeledTraverse(listExpr(list[Expr] items))  =
 "in_Expr_listExpr
-_in_Expr_items
-"+"<for (itemsItem <- items){> <labeledTraverse(itemsItem)>\n<}>"[..-1]+"
+_in_list[Expr]_items
+"+"<for (itemsItem <- items) {><labeledTraverse(itemsItem)>\n<}>"[..-1]+"
 _out_Expr_items
 out_Expr_listExpr";
 
@@ -205,25 +206,18 @@ out_Parameter_parameter";
 
 private str labeledTraverse(block(list[Stmt] statements))  =
 "in_Block_block
-_in_Stmt_statements
-"+"<for (statementsItem <- statements){> <labeledTraverse(statementsItem)>\n<}>"[..-1]+"
+_in_list[Stmt]_statements
+"+"<for (statementsItem <- statements) {><labeledTraverse(statementsItem)>\n<}>"[..-1]+"
 _out_Stmt_statements
 out_Block_block";
 
-private str labeledTraverse(program(list[Stmt] statements))  =
-"in_Program_program
-_in_Stmt_statements
-"+"<for (statementsItem <- statements){> <labeledTraverse(statementsItem)>\n<}>"[..-1]+"
-_out_Stmt_statements
-out_Program_program";
-
 private str labeledTraverse(b_false()) = 
-    "in_Boolean_b_false
-    out_Boolean_b_false";
+"in_Boolean_b_false
+out_Boolean_b_false";
 
 private str labeledTraverse(b_true()) = 
-    "in_Boolean_b_true
-    out_Boolean_b_true";
+"in_Boolean_b_true
+out_Boolean_b_true";
 
 private str labeledTraverse(decl(Type datatype,str id))  =
 "in_Stmt_decl
@@ -244,8 +238,8 @@ private str labeledTraverse(funDef(Type datatype,str id,list[Parameter] paramete
 _in_Type_datatype
 <labeledTraverse(datatype)>
 _out_Type_datatype
-_in_Parameter_parameters
-"+"<for (parametersItem <- parameters){> <labeledTraverse(parametersItem)>\n<}>"[..-1]+"
+_in_list[Parameter]_parameters
+"+"<for (parametersItem <- parameters) {><labeledTraverse(parametersItem)>\n<}>"[..-1]+"
 _out_Parameter_parameters
 _in_Block_block
 <labeledTraverse(block)>
@@ -260,8 +254,8 @@ _out_Expr_expr
 out_Stmt_outputStmt";
 
 private str labeledTraverse(inputStmt()) = 
-    "in_Stmt_inputStmt
-    out_Stmt_inputStmt";
+"in_Stmt_inputStmt
+out_Stmt_inputStmt";
 
 private str labeledTraverse(whileStmt(Expr cond,Block block))  =
 "in_Stmt_whileStmt

@@ -11,6 +11,7 @@ import solvey::AST;
 
 public loc traverserFile = |project://puzzley/src/solvey/Traverser.rsc|;
 private list[str] literals = ["str", "int"];
+private list[str] nodesToSkip = ["program"];
 
 @doc {
 	Generate a traverser of Solvey ASTs that labels before and after states
@@ -21,23 +22,27 @@ public void genTraverser() {
 	
 	visit(#Program) {
 		case cons(label(nodeName,adt(cateName,[])),[],[],{}): {
-			travContent += "private str labeledTraverse(<nodeName>()) = 
-									   '    \"in_<cateName>_< nodeName>
-									   '    out_<cateName>_< nodeName>\";\n\n";
+			if (!(nodeName in nodesToSkip)) {
+				travContent += "private str labeledTraverse(<nodeName>()) = 
+										   '\"in_<cateName>_< nodeName>
+										   'out_<cateName>_< nodeName>\";\n\n";
+			}
 		}
 		case cons(label(nodeName,adt(cateName,[])),children,[],{}): {
-			travContent += "private str labeledTraverse(<nodeName>(";
-			list[tuple[str, str, bool]] childList = [];
-			visit (children) {
-				case label(childName, \str()): childList += <"str", childName, false>;
-				case label(childName, \int()): childList += <"int", childName, false>;
-				case label(childName, adt(childType, [])):  childList += <childType, childName, false>;
-				case label(childName, \list(adt(childType, []))): childList += <childType, childName, true>;
+			if (!(nodeName in nodesToSkip)) {
+				travContent += "private str labeledTraverse(<nodeName>(";
+				list[tuple[str, str, bool]] childList = [];
+				visit (children) {
+					case label(childName, \str()): childList += <"str", childName, false>;
+					case label(childName, \int()): childList += <"int", childName, false>;
+					case label(childName, adt(childType, [])):  childList += <childType, childName, false>;
+					case label(childName, \list(adt(childType, []))): childList += <childType, childName, true>;
+				}
+				travContent = addParameters(travContent, childList);
+				travContent += "\"in_<cateName>_<nodeName>\n";
+				travContent = addChildrenTraversal(travContent, childList);
+				travContent += "out_<cateName>_<nodeName>\";\n\n";	
 			}
-			travContent = addParameters(travContent, childList);
-			travContent += "\"in_<cateName>_<nodeName>\n";
-			travContent = addChildrenTraversal(travContent, childList);
-			travContent += "out_<cateName>_<nodeName>\";\n\n";	
 		}
 	}
 	writeFile(traverserFile, travContent);
@@ -47,7 +52,7 @@ public void genTraverser() {
 	Add an entry point for the traversal that is public and thus accesible through import. 
 }
 private str addEntryPoint(str content) {
-	return content + "public str startLabeledTraverse(Program p) = labeledTraverse(p);\n";
+	return content + "public str startLabeledTraverse(program(list[Stmt] statements)) = \"\<for (stmt \<- statements) {\>\<labeledTraverse(stmt)\>\\n\<}\>\"[..-1];\n\n";
 }
 
 @doc {
@@ -80,10 +85,11 @@ private str addChildrenTraversal(str content, list[tuple[str, str, bool]] childL
 		
 		if (typ in literals) continue;
 		
-		content += "_in_<typ>_<name>\n";
 		if (isList) {
-			content += "\"+\"\<for (<name>Item \<- <name>){\>\<labeledTraverse(<name>Item)\>\\n\<}\>\"[..-1]+\"\n";
+			content += "_in_list[<typ>]_<name>\n";
+			content += "\"+\"\<for (<name>Item \<- <name>) {\>\<labeledTraverse(<name>Item)\>\\n\<}\>\"[..-1]+\"\n";
 		} else {
+			content += "_in_<typ>_<name>\n";
 			content += "\<labeledTraverse(<name>)\>\n";
 		}
 		content += "_out_<typ>_<name>\n";
