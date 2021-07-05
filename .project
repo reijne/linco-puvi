@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>puzzley</name>
+	<name>Puzzle</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -37,21 +37,4 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>rascal_eclipse.term_nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/ZZZEXmachine/machine-AST.rsc</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-AST.rsc</locationURI>
-		</link>
-		<link>
-			<name>src/ZZZEXmachine/machine-IDE.rsc</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-IDE.rsc</locationURI>
-		</link>
-		<link>
-			<name>src/ZZZEXmachine/machine-Syntax.rsc</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/machine/machine-Syntax.rsc</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

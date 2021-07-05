@@ -1,7 +1,0 @@
-state some 
-	some:other
-	some:else
-	
-state other
-	
-state else
