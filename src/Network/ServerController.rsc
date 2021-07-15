@@ -15,10 +15,6 @@ void  testServer() {
 		startServer(testport);
 	} catch RuntimeException re:  {
 		print(re);
-		stopServer();
 	}
-}
-
-void stop() {
 	stopServer();
 }

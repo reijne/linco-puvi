@@ -8,16 +8,18 @@ import io.usethesource.vallang.IValueFactory;
 
 // Inspiration:: https://www.baeldung.com/a-guide-to-java-sockets
 public class Server {
-	private final IValueFactory values;
+//	private final IValueFactory values;
 	private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
 
+    // Initialise the server class using the IValueFactory (linking Rascal).
     public Server(IValueFactory values){
-        this.values = values;
+//        this.values = values;
     }
 
+    // Start the server on port, listening for "ping"  to send back "pong".
     public void startServer(IInteger port) throws IOException {
     	int portInteger = port.intValue();
         serverSocket = new ServerSocket(portInteger);
@@ -29,6 +31,7 @@ public class Server {
         out.println(response);
     }
 
+    // Stop the server by closing the streams and the connection.
     public void stopServer() throws IOException {
         in.close();
         out.close();
