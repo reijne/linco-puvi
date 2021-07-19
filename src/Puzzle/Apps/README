@@ -1,0 +1,8 @@
+Built applications are to be contained within this folder. 
+This way they can be launched using exec.
+
+The file structure for the Apps has to be
+Apps>[appname]>[operating system]>[appname].format
+
+Where the appname is user determined
+and operating system is elem(Windows, Linux, MacOs)

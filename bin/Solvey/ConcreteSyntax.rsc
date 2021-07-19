@@ -37,32 +37,11 @@ lexical Comment
 // Program syntax
 start syntax Program = program: Stmt* statements;
 
-// Snippet intermediate either decl or stmt
-//syntax Snippet = declSnip: Decl decl 
-//						   | stmtSnip: Stmt stmt;
-
 // Block of code
 syntax Block = block: Stmt* statements;
 
+// All types
 syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
-
-// Declaration of a variable type
-//syntax Decl = 
-					  //|  decl: "number" datatype ID id
-					  //|  decl: "bool" datatype ID id;
-
-//syntax Decl = strDecl: "string" datatype ID id "=" Expr expr
-//					  |  numDecl: "number" datatype ID id "=" Expr expr
-//					  |  boolDecl: "bool" datatype ID id "=" Expr expr;
-//syntax Arguments = noargs: "(" >> ")" 
-//								  | arguments: "(" Expr arg1 ("," Expr)* ")"argrest;
-//syntax Arguments = arguments:{Expr ","}* args;
-
-//syntax Items = emptyList: "[" "]" 
-//						| items: "[" Expr item1 ("," Expr)* items "]" ;
-//noArgs: ""
-//								  |  oneArg: Expr
-//								  |  arguments: (Expr ",")*;
 
 // All possible expressions
 syntax Expr = idExpr: ID id !>> "("

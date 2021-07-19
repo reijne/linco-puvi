@@ -1,7 +1,5 @@
 // Abstract syntax tree for Solvey DSL.
 // Author: Youri Reijne
-//
-// NOTE** Utilise double slash "//" at the end of a line to exclude it from the mapping in Showey
 
 module Solvey::AST
 
@@ -11,32 +9,14 @@ import Solvey::ConcreteSyntax;
 data Boolean = b_true() 
 						| b_false(); 
 
-data Program = program(list[Stmt] statements); // <- Exclude from visualisation mapping 
+data Program = program(list[Stmt] statements); 
 
-//data Snippet = declSnip(Decl decl)
-//						| stmtSnip(Stmt stmt);
-
-data Block = block(list[Stmt] statements); // <- Exclude from visualisation mapping 
+data Block = block(list[Stmt] statements); 
 
 data Type = t_str() 
 				   | t_num()  
 				   | t_bool() 
 				   | t_list(); 
-
-//data WhiteSpace = space(list[str] spacing);
-
-//data Decl = decl(Type datatype, str id);
-				  
-//data Decl = strDecl(str datatype, str, id, Expr expr)
-//				  | numDecl(str datatype, str, id, Expr expr)
-//				  | boolDecl(str datatype, str id, Expr expr);
-
-//data Arguments = noargs() 
-//							   | arguments(Expr arg1, list[Expr] argrest);
-//data Arguments = arguments);
-
-//data Items = emptyList()
-//					| items(Expr item1, list[Expr] items);
 
 data Expr = idExpr(str id) 
 				  | strExpr(str string) 
@@ -78,27 +58,12 @@ data Stmt = exprStmt(Expr expr)
 
 data Parameter = parameter(str datatype, str id); 
 
-//data Arguments = arguments(list[Expr] exprs);
-//noArgs()
-//							  | oneArg(Expr expr) 
-//							  | nArgs(list[Expr]);
-//data Expr_stmt = exprStmt(Expr expr);
-//data Assign_stmt = assStmt(str id, Expr expr);
-//data If_stmt = ifStmt(Expr cond, Block block);
-//data Repeat_stmt = repeatStmt(real iter, Block block);
+anno loc Program@location;
 
-//anno loc String@location;
-//anno loc Number@location;
-//anno loc Boolean@location;
+anno loc Block@location;
 
-//anno loc ID@location;
-//
-//anno loc Program@location;
-//
-//anno loc Block@location;
-//
-//anno loc Expr@location;
-//anno loc Stmt@location;
+anno loc Expr@location;
+anno loc Stmt@location;
 
 
-public Program sly_build(loc file) = implode(#Program, sly_parse(file)); // <- Exclude from visualisation mapping
+public Program sly_build(loc file) = implode(#Program, sly_parse(file)); 

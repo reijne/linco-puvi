@@ -1,6 +1,6 @@
 // Type some code here and pray to the gods it shows in the scene :)
-number x
-string s
 
-s := "2"
+repeat(5)
+	x :=1
+end repeat
 

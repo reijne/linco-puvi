@@ -7,6 +7,7 @@ import java.net.URL;
 
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.IValueFactory;
+import org.rascalmpl.values.functions.IFunction;
 
 public class Controller {
 		private final IValueFactory values;
@@ -29,5 +30,15 @@ public class Controller {
 
 		String appPath = location.getPath() + relativePath;
 		Runtime.getRuntime().exec(appPath);
+	}
+	
+	// File difference worker
+	// readFile(IFuncation sendUpdate)
+	//	spawn thread
+	// while something
+	// if (diff != null) sendUpdate.call
+//	public void worker(IFunction fun) {
+//		fun.call();
+//	}
 	}
 }

@@ -10,6 +10,7 @@ public java void stopServer();
 
 public int testport = 9999;
 
+// Test the Socket Server side on local ip and testport
 void  testServer() {
 	try {
 		startServer(testport);

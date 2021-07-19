@@ -5,6 +5,7 @@ import IDE;
 import Exception;
 
 import Solvey::AST;
+import Solvey::ConcreteSyntax;
 import Solvey::Traverser;
 import Solvey::NodeExtractor;
 
@@ -28,7 +29,7 @@ private str sceney = "Sceney";
 // Solvey file loop < parse into AST and create labeled traversal, to send over socket
 
 public str tryTraverse() {
-	Program p = sly_build(|project://puzzley/src/solvey/solutions/smoll.sly|);
+	Program p = sly_build(solution);
 	str s = startLabeledTraverse(p);
 	print(s);
 	return s;
@@ -52,9 +53,10 @@ public void createSceney() {
 
 public void updateSceney() {
 	try {
+		//print("\n\nCode ::\n<sly_parse(solution)>\nEnd Code\n\n");
 		Program p = sly_build(solution);
 		updateSceney(startLabeledTraverse(p));
-	} catch: print("parse error");	
+	} catch e: print("parse error <e>");	
 }
 
 public void makePuzzle() {
@@ -73,5 +75,5 @@ public void makePuzzle() {
 			oldContent = newContent;
 		}
 	}
-	stopper();
+	safeStopClient();
 }

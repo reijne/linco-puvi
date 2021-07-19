@@ -22,19 +22,27 @@ void testClient() {
 	stopClient();
 }
 
-void stopper() {
+@doc {
+	Stop the Client Socket connection and release it.
+}
+void safeStopClient() {
 	stopClient();
 	isConnected = false;
 }
 
+@doc {
+	Close the Unity Server Socket using close:true
+}
 void closeServer() {
 	sendMessage(remoteCall("", "", true));
 }
 
-void starter() {
-	if (Network::ClientController::isConnected) throw IO("Socket connection already exists, close all running apps.");
+@doc {
+	Start the Client Socket and throw an error if the client already is connected
+}
+void safeStartClient() {
+	if (isConnected) throw IO("Socket connection already exists, close all running apps.");
 	startClient("127.0.0.1", 530);
-	print("made connection\n");
 	isConnected = true;
 }
 
@@ -45,7 +53,6 @@ str remoteCall(str method, str param, bool close) {
 	rpc = ("method": method,
 			  "param": param,
 			  "close": close);
-	print("created remote call :: <method>\n");
 	return asJSON(rpc);
 }
 
@@ -54,13 +61,14 @@ str remoteCall(str method, str param, bool close) {
 }
 void createShowey(str flattenedTree) {
   	try {
-		starter();
+		//safeStartClient();
+		startClient("127.0.0.1", 530);
 		sendMessage(remoteCall("createShowey", flattenedTree, true));
 	} catch: {
 		createShowey(flattenedTree);
 		return;
 	}
-	stopper();
+	safeStopClient();
 }
 
 @doc {
@@ -68,13 +76,14 @@ void createShowey(str flattenedTree) {
 }
 void updateShowey(str serialisedShowDef) {
 	try {
-		starter();
+		//safeStartClient();
+		startClient("127.0.0.1", 530);
 		sendMessage(remoteCall("updateShowey", serialisedShowDef, true));
 	} catch: {
 		createShowey(serialisedShowDef);
 		return;
 	}
-	stopper();
+	safeStopClient();
 }
 
 @doc {
@@ -82,7 +91,8 @@ void updateShowey(str serialisedShowDef) {
 }
 void createSceney(str serialisedShowDef) {
 	try {
-		starter();
+		//safeStartClient();
+		startClient("127.0.0.1", 530);
 		sendMessage(remoteCall("createSceney", serialisedShowDef, false));
 		print("sent RPC:: createSceney\n");
 	} catch: {
@@ -95,7 +105,7 @@ void createSceney(str serialisedShowDef) {
 	Send the current state of the program to the 3D scene.
 }
 void updateSceney(str labeledTraversal) {
-	if (!isConnected) throw IO("Socket Connection not instantiated but attempting to send the scene");
+	//if (!isConnected) throw IO("Socket Connection not instantiated but attempting to send the scene");
 	sendMessage(remoteCall("updateSceney", labeledTraversal, false));
 	print("sent RPC:: updateSceney\n");
 }
