@@ -1,20 +1,44 @@
-module solvey::tests::AST
+module Solvey::tests::AbstractTest
 
 import IO;
+import String;
 import Boolean;
-import Exception;
 
-import solvey::ConcreteSyntax;
-import solvey::AST;
+import Solvey::ConcreteSyntax;
+import Solvey::AbstractSyntax;
 
-loc testDir = |project://puzzley/src/solvey/tests|;
-loc testFile;
-bool isSetup = false;
+import Solvey::tests::Setup;
 
-void setupTestFile() {
-	testFile = testDir + "astTest.sly";
-	writeFile(testFile, "");
-	isSetup = true;
+private loc thisFile = |project://Puzzle/src/Solvey/tests/AbstractTest.rsc|;
+
+public bool isPrintingDisabled = false;
+
+@doc {
+	Gather a list of all the existing test bool functions without parameters and append them to this file, overwriting the last line.
+}
+public void updateTestList() {
+	list[str] lines = readFileLines(thisFile);
+	list[str] tests = [];
+	str writer = "";
+	for (line <- lines[0..-1]) {
+		writer += "<line>\n";
+		if (contains(line, "test bool") && contains(line, "()") && !contains(line, "waba")) 
+			tests += getTestName(line);
+	}
+	inner = "<for(tes<-tests){><tes>,<}>"[..-1];
+	writer += "public list[bool()] currentAbstractTests = [<inner>];"; 
+	writeFile(thisFile, writer);
+}
+
+@doc {
+	Get the function name of a test.
+}
+str getTestName(str line) {
+	list[str] s = split("test bool", line);
+	str name = replaceAll(s[1], " ", "");
+	name = replaceAll(name, "(", "");
+	name = replaceAll(name, ")", "");
+	return replaceAll(name, "{", "");
 }
 
 @doc {
@@ -23,8 +47,8 @@ void setupTestFile() {
 bool buildLine(str line) {
 	bool success = true;
 	try {
-		writeFile(testFile, line);
-		Program ast = sly_build(testFile);
+		writeFile(Solvey::tests::Setup::testFile, line);
+		Program ast = sly_build(Solvey::tests::Setup::testFile);
 	} catch e: {
 		success = false;
 		print(e);
@@ -32,16 +56,19 @@ bool buildLine(str line) {
 	return success;
 }
 
+@doc {
+	Foreach code snippet write it to file and attempt to build, then report on the results.
+}
 bool buildLines(str testName, list[str] lines) {
-	print("\n" + testName+"\n---------------------------------------------------------------");
-	if (!isSetup) setupTestFile();
+	if (!isPrintingDisabled) print("\n" + testName+"\n---------------------------------------------------------------");
+	if (!Solvey::tests::Setup::isSetup) Solvey::tests::Setup::setupTestFile();
 	bool success = true;
 	for (line <- lines) {
-		print("\n" + line);
+		if (!isPrintingDisabled) print("\n" + line);
 		success = success && buildLine(line);
-		print("\n|^|^| success = " + toString(success) + "\n");		
+		if (!isPrintingDisabled)print("\n|^|^| success = " + toString(success) + "\n");		
 	}
-	print("\n======================================");
+	if (!isPrintingDisabled)print("\n======================================");
 	return success;
 }
 
@@ -53,7 +80,7 @@ test bool declarations() {
 	return buildLines("Declarations", ["string myString", 
 															  "number myNumber", 
 															  "bool myBool",
-															  "list myList"]);
+															  "list[number] myList"]);
 															
 }
 
@@ -115,10 +142,16 @@ test bool functionCall() {
 	return buildLines("Function call", ["\nfunc()","func(x)","func(2)","func(3+3)","func(4\>2)"]);
 }
 
-test bool bracketExpr() {
+test bool bracketExpression() {
 	return buildLines("Bracket Expression", ["(2)","(2+2)","two := (2)"]);
 }
 
 test bool inoutput() {
 	return buildLines("IO time", ["input()", "output(\"hello world\")"]);
 }
+
+// DO NOT REMOVE OR ALTER THE FOLLOWING LIST DECLARATION.
+// Keeps track of the currently made tests for AST such that they can be utilised elsewhere.
+// This line has to be the last in order for the update tests function to work properly !!!!!!!!
+public list[bool()] currentAbstractTests = [declarations,listCreation,arithmetics,stringConcat,boolOperators,boolComparison,ifStatement,ifelseStatement,repeatStatement,whileStatement,functionDefinition,functionCall,bracketExpression,inoutput];
+

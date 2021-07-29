@@ -1,52 +1,29 @@
-module Solvey::NodeExtractor
+module Tools::NodeExtractor
 
 import IO;
 import List;
 import Type;
-import Node;
 import String;
 
-import Solvey::AST;
+import Solvey::AbstractSyntax;
 
 import util::Benchmark;
 import util::Math;
 
-public loc standardSolvey = |project://puzzley/src/solvey/AST.rsc|;
-
-@doc {
-	Compare the execution times for the different methods of AST node extraction.
-}
-public void timer() {
-	for (iter <- [100, 1000, 10000, 100000]) {		
-		int starter = realTime();
-		for (_ <- [0 .. iter]) {
-			getSolveyASTNodesString(standardSolvey);
-		}
-		int end  = realTime();
-		int firsty = end-starter;
-		
-		starter = realTime();
-		for (_ <- [0 .. iter]) {
-			getNodes();
-		}
-		end = realTime();
-		int lasty = end-starter;
-		print("Calls: "); 			print(iter);
-		print("\nString method:"); 	print(firsty);
-		print("\nVisit method: "); 	print(lasty);
-		print("\n" + "======\n");
-		print("Ratio:");						print(toReal(lasty)/firsty); 	
-		print("\n");	
-	}
-}
+private loc standardSolvey = |project://Puzzle/src/Solvey/AbstractSyntax.rsc|;
 
 @doc {
 	Get the hierarchical AST nodes for the solvey language type #Program in a string.
 }
-public str getNodes() {
+public str getNodes() = getNodes(#Program);
+ 
+@doc {
+	Get the hierarchical AST nodes representation for a given tree..
+}
+public str getNodes(node tree) {
 	categoryNodeMap = ();
 	nodeChildrenMap = ();
-	visit (#Program) {
+	visit (tree) {
 		case cons(label(nodeName,adt(cateName,[])),children,[],{}): {
 			categoryNodeMap = initialisedAdd(categoryNodeMap, cateName, nodeName);
 			visit (children) {
@@ -96,6 +73,7 @@ private map[value, list[value]] initialisedAdd(map[value, list[value]] mappy, va
 	return mappy;
 }
 
+/// Section /// String methodology for extraction
 @doc {
 	Get all the AST nodes for the standard location of solvey
 }
@@ -149,4 +127,32 @@ public str insertNewLines(str line) {
 	line = replaceAll(line, "}", ": \n}");
 	line = replaceAll(line, ",", ": \n\t");
 	return line;
+}
+/// End Section /// String methodology for extraction
+
+@doc {
+	Compare the execution times for the different methods of AST node extraction.
+}
+public void timer() {
+	for (iter <- [100, 1000, 10000, 100000]) {		
+		int starter = realTime();
+		for (_ <- [0 .. iter]) {
+			getSolveyASTNodesString(standardSolvey);
+		}
+		int end  = realTime();
+		int firsty = end-starter;
+		
+		starter = realTime();
+		for (_ <- [0 .. iter]) {
+			getNodes();
+		}
+		end = realTime();
+		int lasty = end-starter;
+		print("Calls: "); 			print(iter);
+		print("\nString method:"); 	print(firsty);
+		print("\nVisit method: "); 	print(lasty);
+		print("\n" + "======\n");
+		print("Ratio:");						print(toReal(lasty)/firsty); 	
+		print("\n");	
+	}
 }

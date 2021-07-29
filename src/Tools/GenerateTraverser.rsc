@@ -1,32 +1,34 @@
-module Solvey::GenerateTraverser
+module Tools::GenerateTraverser
 
 import IO;
 import String;
 
-import Node;
 import List;
-import Map;
 import Type;
-import Solvey::AST;
+import Solvey::AbstractSyntax;
 
-public loc traverserFile = |project://puzzley/src/solvey/Traverser.rsc|;
+public loc traverserFile = |project://Puzzle/src/Solvey/Traverser.rsc|;
 private list[str] literals = ["str", "int"];
 
 @doc {
 	Generate a traverser of Solvey ASTs that labels before and after states
 }
-public void genTraverser() {
-	str travContent = "//This is a generated file, do not manually alter unless you absolutely know what you\'re doing, and \n//dont mind getting your work overwritten upon next generation.\n\n // Traverser module implementing a custom labeled traversal of a Solvey AST\nmodule solvey::Traverser\nimport solvey::AST;\n\n";
-	travContent = addEntryPoint(travContent);
+public void genTraverser() = genTraverser(#Program);
+
+@doc {
+	Generate a traverser for the given tree that labels before and after states for every node.
+}
+public void genTraverser(node tree) {
+	str travContent = "//This is a generated file, do not manually alter unless you absolutely know what you\'re doing, and \n//dont mind getting your work overwritten upon next generation.\n\n // Traverser module implementing a custom labeled traversal of a Solvey AST\nmodule Solvey::Traverser\nimport Solvey::AbstractSyntax;\n\n";
 	
-	visit(#Program) {
+	visit(tree) {
 		case cons(label(nodeName,adt(cateName,[])),[],[],{}): {
 			travContent += "private str labeledTraverse(<nodeName>()) = 
 									   '    \"in-<cateName>-< nodeName>
 									   '    out-<cateName>-< nodeName>\";\n\n";
 		}
 		case cons(label(nodeName,adt(cateName,[])),children,[],{}): {
-			travContent += "private str labeledTraverse(<nodeName>(";
+			travContent += "public str labeledTraverse(<nodeName>(";
 			list[tuple[str, str, bool]] childList = [];
 			visit (children) {
 				case label(childName, \str()): childList += <"str", childName, false>;
@@ -44,14 +46,7 @@ public void genTraverser() {
 }
 
 @doc {
-	Add an entry point for the traversal that is public and thus accesible through import. 
-}
-private str addEntryPoint(str content) {
-	return content + "public str startLabeledTraverse(Program p) = labeledTraverse(p);\n";
-}
-
-@doc {
-	Add in the parameters of the node type using its children
+	Add in the parameters of the node type using its children and their types.
 }
 private str addParameters(str content, list[tuple[str, str, bool]] params) {
 	for (i <- [0 .. size(params)]) {

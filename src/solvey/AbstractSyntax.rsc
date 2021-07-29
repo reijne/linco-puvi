@@ -1,7 +1,7 @@
 // Abstract syntax tree for Solvey DSL.
 // Author: Youri Reijne
 
-module Solvey::AST
+module Solvey::AbstractSyntax
 
 import ParseTree;
 import Solvey::ConcreteSyntax;
@@ -30,8 +30,8 @@ data Expr = idExpr(str id)
 				  | mulExpr(Expr lhs, Expr rhs) 
 				  | divExpr(Expr lhs, Expr rhs) 
 				  | modExpr(Expr lhs, Expr rhs) 
-				  | addExpr(Expr lhs, Expr rhs) 
 				  | minExpr(Expr lhs, Expr rhs) 
+				  | addExpr(Expr lhs, Expr rhs) 
 				  
 				  | andExpr(Expr lhs, Expr rhs) 
 				  | orExpr(Expr lhs, Expr rhs) 
@@ -46,6 +46,7 @@ data Expr = idExpr(str id)
 
 data Stmt = exprStmt(Expr expr) 
 				   | decl(Type datatype, str id) 
+				   | listDecl(Type datatype, str id) 
 				   | returnStmt(Expr expr) 
 				   | assStmt(str id, Expr expr) 
 				   | inputStmt() 
@@ -56,7 +57,7 @@ data Stmt = exprStmt(Expr expr)
 				   | whileStmt(Expr cond, Block block) 
 				   | funDef(Type datatype, str id, list[Parameter] parameters, Block block); 
 
-data Parameter = parameter(str datatype, str id); 
+data Parameter = parameter(Type datatype, str id); 
 
 anno loc Program@location;
 

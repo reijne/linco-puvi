@@ -80,6 +80,7 @@ syntax Expr = idExpr: ID id !>> "("
 // All possible statements
 syntax Stmt = exprStmt: Expr expr
 					   | decl: Type datatype ID id
+					   | listDecl: "list" "[" Type datatype "]" ID id
 					   | returnStmt: "return" Expr expr
 					   | assStmt: ID id ":=" Expr expr
 					   | inputStmt: "input" "(" ")"
@@ -93,12 +94,6 @@ syntax Stmt = exprStmt: Expr expr
 syntax Parameters = Parameter*;
 
 syntax Parameter = parameter: Type datatype ID id;
-
-// Individual statement's syntax 
-//syntax Expr_stmt = exprStmt: "e:" Expr expr;
-//syntax Assign_stmt = assStmt: ID id "=" Expr expr;
-//syntax If_stmt = ifStmt: "if" "(" Expr cond ")" "{" Block block"}";
-//syntax Repeat_stmt = repeatStmt: "repeat" "(" Number iter")" "{" Block block"}";
 
 keyword Keyword = "string" | "number" | "bool" | "list" |
 									"function" | "end" | "return" | 
@@ -120,5 +115,3 @@ anno loc Stmt@location;
 public start[Program] sly_parse(str input, loc file) = parse(#start[Program], input, file);
   
 public start[Program] sly_parse(loc file) = parse(#start[Program], file);
-  
- public Tree sly_parse_tree(loc file) = parse(#start[Program], file);

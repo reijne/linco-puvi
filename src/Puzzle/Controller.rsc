@@ -4,7 +4,7 @@ import IO;
 import IDE;
 import Exception;
 
-import Solvey::AST;
+import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
 import Solvey::Traverser;
 import Solvey::NodeExtractor;
@@ -30,7 +30,7 @@ private str sceney = "Sceney";
 
 public str tryTraverse() {
 	Program p = sly_build(solution);
-	str s = startLabeledTraverse(p);
+	str s = labeledTraverse(p);
 	print(s);
 	return s;
 }
@@ -55,7 +55,7 @@ public void updateSceney() {
 	try {
 		//print("\n\nCode ::\n<sly_parse(solution)>\nEnd Code\n\n");
 		Program p = sly_build(solution);
-		updateSceney(startLabeledTraverse(p));
+		updateSceney(labeledTraverse(p));
 	} catch e: print("parse error <e>");	
 }
 
@@ -77,3 +77,16 @@ public void makePuzzle() {
 	}
 	safeStopClient();
 }
+
+// Make multiple choice puzzle
+// header :: Uncomment the choice and see what happens
+// addChoice("code snippet")
+
+// Make ordering puzzle 
+// Order the sections to fix errors / make the visualisation show something
+
+// make addition puzzle
+// Add a piece of code such that the output is correct
+
+// make empty puzzle
+// Give a general goal and let the solver figure out how to do it completely

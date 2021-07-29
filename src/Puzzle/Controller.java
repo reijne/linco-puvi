@@ -7,7 +7,7 @@ import java.net.URL;
 
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.IValueFactory;
-import org.rascalmpl.values.functions.IFunction;
+//import org.rascalmpl.values.functions.IFunction;
 
 public class Controller {
 		private final IValueFactory values;
@@ -32,6 +32,17 @@ public class Controller {
 		Runtime.getRuntime().exec(appPath);
 	}
 	
+//	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//	   IResourceChangeListener listener = new IResourceChangeListener() {
+//	      public void resourceChanged(IResourceChangeEvent event) {
+//	         System.out.println("Something changed!");
+//	      }
+//	   };
+//	   workspace.addResourceChangeListener(listener);
+//
+//	   //... some time later one ...
+//	   workspace.removeResourceChangeListener(listener);
+	
 	// File difference worker
 	// readFile(IFuncation sendUpdate)
 	//	spawn thread
@@ -40,5 +51,4 @@ public class Controller {
 //	public void worker(IFunction fun) {
 //		fun.call();
 //	}
-	}
 }
