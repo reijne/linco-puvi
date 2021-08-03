@@ -54,11 +54,28 @@ TENV checkProgram(Program p) {
     throw "Cannot happen";
 }
 
+tuple[bool, Type] getParam(str id, TENV env) {
+	for (tuple[Name, Type] param <- env.funParams[lastFunc]) {
+		if (param[0] == id) {
+			return <true, param[1]>;
+		}
+	} 
+	return <false, t_list()>;
+}
+
 // Expression checking
 TENV checkExpr(Expr:idExpr(Name id), Type req, TENV env) {
-	if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>");
-	expectedType = env.symbols[id];
-	return req == expectedType ? env : addError(env, Expr@location, expected(req, expectedType));
+	if (inFunc) {
+		tuple[bool, Type] paramType = getParam(id, env);
+		if (!paramType[0] && !env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>"); 
+		if (paramType[0]) {
+			return req == paramType[1] ? env : addError(env, Expr@location, expected(req, paramType[1]));
+		}
+	} else {
+		if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>");
+		return req == env.symbols[id] ? env : addError(env, Expr@location, expected(req, env.symbols[id]));
+	}
+	throw("Cannot happen");
 }
 
 // Typed expressions
@@ -74,6 +91,11 @@ TENV checkExpr(Expr:boolExpr(Boolean boolean), Type req, TENV env) =
 // List expression, check every element
 TENV checkExpr(Expr:listExpr(list[Expr] items), Type req, TENV env) {
 	for (item <- items) env = checkExpr(item, req, env);
+	return env;
+}
+
+// TODO add this from the list of inputs
+TENV checkExpr(Expr:inputExpr(), Type req, TENV env) {
 	return env;
 }
 
@@ -186,8 +208,6 @@ TENV checkStmt(Stmt:assStmt(str id, Expr expr), TENV env) {
 	if (!env.symbols[id]?) return addError(env, Stmt@location, "Variable not found. Attempting to assign a value to an undeclared variable.");
 	return checkExpr(expr, env.symbols[id], env);
 }
-
-TENV checkStmt(Stmt:inputStmt(), TENV env) = env;
 
 // TODO figure out how to fucking make any type required lol
 TENV checkStmt(Stmt:outputStmt(Expr expr), TENV env) = env;

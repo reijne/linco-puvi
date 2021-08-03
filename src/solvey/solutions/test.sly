@@ -53,8 +53,8 @@ while (succ)
 	x :=x + 1
 end while
 
-bool function isDivisiblebyThree(number x)
-	return (x % 2) == 0
+bool function isDivisiblebyThree(number wauw)
+	return (wauw % 2) == 0
 end function
 
 bool function isFunc(number x, string s)

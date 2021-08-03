@@ -49,7 +49,8 @@ syntax Expr = idExpr: ID id !>> "("
 					  | numExpr: Number number
 					  | boolExpr: Boolean boolean
 					  | listExpr: "[" {Expr ","}* items "]"
-					  | funCall: ID id "(" {Expr ","}* args")"
+					  > inputExpr:"input" "(" ")"
+					  > funCall: ID id "(" {Expr ","}* args")"
 					  > bracketExpr: "(" Expr e ")"
 					  
 					  > left ( left powExpr: Expr lhs "**" Expr rhs
@@ -83,7 +84,6 @@ syntax Stmt = exprStmt: Expr expr
 					   | listDecl: "list" "[" Type datatype "]" ID id
 					   | returnStmt: "return" Expr expr
 					   | assStmt: ID id ":=" Expr expr
-					   | inputStmt: "input" "(" ")"
 					   | outputStmt: "output" "(" Expr expr ")"
 					   | ifStmt: "if" "(" Expr cond ")"  Stmt* block "end" "if"
 					   | ifElseStmt: "if" "(" Expr cond ")"  Stmt* thenBlock "else" Stmt* elseBlock "end" "if"

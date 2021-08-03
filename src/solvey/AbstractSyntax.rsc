@@ -42,14 +42,15 @@ data Expr = idExpr(str id)
 				  | gteExpr(Expr lhs, Expr rhs) 
 				  | ltExpr(Expr lhs, Expr rhs) 
 				  | lteExpr(Expr lhs, Expr rhs) 
+				  
+				  | inputExpr()
 				  ;
 
 data Stmt = exprStmt(Expr expr) 
 				   | decl(Type datatype, str id) 
 				   | listDecl(Type datatype, str id) 
 				   | returnStmt(Expr expr) 
-				   | assStmt(str id, Expr expr) 
-				   | inputStmt() 
+				   | assStmt(str id, Expr expr)  
 				   | outputStmt(Expr expr) 
 				   | ifStmt(Expr cond, list[Stmt] block) 
 				   | ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBlock) 

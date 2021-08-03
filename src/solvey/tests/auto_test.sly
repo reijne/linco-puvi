@@ -1,2 +1,3 @@
-bol bol5
-bool5 := !true
+bool function isDivisiblebyThree(number x, string s)
+	return x % 3 == 0
+end function

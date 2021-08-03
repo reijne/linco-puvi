@@ -10,6 +10,8 @@ data SolveyVal = stringval(str s)
 						  | errorval(loc l, str msg);
 					
 alias VENV = map[Name, SolveyVal]; 	
+
+str currentFunction = "";
 						  
 // Expressions evaluation
 SolveyVal evalExpr(Expr:idExpr(str id), VENV env) = 
@@ -78,22 +80,65 @@ SolveyVal evalExpr(Expr:notExpr(Expr expr), VENV env) =
 	boolval(b1) := evalExpr(expr) ? 
 	boolval(!b1) : 
 	errorval(Expr@location, "NOT operation requires a boolean argument");
-	
+
 SolveyVal evalExpr(Expr:eqExpr(Expr lhs, Expr rhs), VENV env) {
+	str equalError(string typa) = "Equality Operator requires two arguments of the same type, one is a <typa> the other is not";
 	if (boolval(b1) := evalExpr(lhs)) {
 		boolval(b2) := evalExpr(rhs) ? boolval(b1 == b2) : 
-		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is boolean the other is not");
+		errorval(Expr@location, equalError("bool"));
 	}	else if (numberval(n1) := evalExpr(lhs)) {
 		numberval(n2) := evalExpr(rhs) ? boolval(n1 == n2) : 
-		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a number the other is not");
+		errorval(Expr@location, equalError("number"));
 	} else if (stringval(s1) := evalExpr(lhs)) {
 		stringval(s2) := evalExpr(rhs) ? boolval(n1 == n2) : 
-		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a string the other is not");
-	} else if (stringval(s1) := evalExpr(lhs)) {
-		stringval(s2) := evalExpr(rhs) ? boolval(n1 == n2) : 
-		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a string the other is not");
+		errorval(Expr@location, equalError("string"));
+	} else if (listval(l1) := evalExpr(lhs)) {
+		listval(l2) := evalExpr(rhs) ? boolval(n1 == n2) : 
+		errorval(Expr@location, equalError("list"));
+	} else {
+		errorval(Expr@location, "Cannot compare the values with each other, an unknown type has been found");
 	} 
-	//(boolval(b1) := evalExpr(lhs) && ) ? 
-	//boolval(b1 == b2) : 
-	//errorval(Expr@location, "OR operation requires boolean arguments on both sides");
+}
+
+SolveyVal evalExpr(Expr:gtExpr(Expr lhs, Expr rhs), VENV env) = 
+	(numberval(n1) := evalExpr(lhs) && numberval(n2) := evalExpr(rhs)) ? 
+	boolval(n1 > n2) : 
+	errorval(Expr@location, "Greater than requires number arguments on both sides in order to compare");
+
+SolveyVal evalExpr(Expr:gteExpr(Expr lhs, Expr rhs), VENV env) = 
+	(numberval(n1) := evalExpr(lhs) && numberval(n2) := evalExpr(rhs)) ? 
+	boolval(n1 >= n2) : 
+	errorval(Expr@location, "Greater than or equal requires number arguments on both sides in order to compare");
+
+SolveyVal evalExpr(Expr:ltExpr(Expr lhs, Expr rhs), VENV env) = 
+	(numberval(n1) := evalExpr(lhs) && numberval(n2) := evalExpr(rhs)) ? 
+	boolval(n1 < n2) : 
+	errorval(Expr@location, "Lesser than requires number arguments on both sides in order to compare");
+	
+SolveyVal evalExpr(Expr:lteExpr(Expr lhs, Expr rhs), VENV env) = 
+	(numberval(n1) := evalExpr(lhs) && numberval(n2) := evalExpr(rhs)) ? 
+	boolval(n1 < n2) : 
+	errorval(Expr@location, "Lesser than or equal requires number arguments on both sides in order to compare");
+	
+// Statement Evaluations
+VENV evalStmt(Stmt:exprStmt(Expr expr), VENV env) = env;
+
+VENV evalStmt(Stmt:decl(Type datatype, str id), VENV env) = env;
+
+VENV evalStmt(Stmt:listDecl(Type datatype, str id), VENV env) = env;
+
+VENV evalStmt(Stmt:returnStmt(Expr expr), VENV env) {
+	env[currentFunction] = evalExpr(expr);
+	return env;
+}
+
+VENV evalStmt(Stmt:assStmt(str id, Expr expr), VENV env) {
+	env[id] = evalExpr(expr);
+	return env;
+}
+
+// TODO add this thing, make a list of inputs to gather from
+VENV evalStmt(Stmt:inputStmt(), VENV env) {
+	// Gather the list bro
+	return env;
 }
