@@ -57,7 +57,7 @@ SolveyVal evalExpr(Expr:minExpr(Expr lhs, Expr rhs), VENV env) =
 	numberval(n1 - n2) : 
 	errorval(Expr@location, "Minus requires number arguments on both sides");
 
-// TODO add list operations
+// TODO add string + list operations
 SolveyVal evalExpr(Expr:addExpr(Expr lhs, Expr rhs), VENV env) = 
 	(numberval(n1) := evalExpr(lhs) && numberval(n2) := evalExpr(rhs)) ? 
 	numberval(n1 + n2) : 
@@ -81,10 +81,18 @@ SolveyVal evalExpr(Expr:notExpr(Expr expr), VENV env) =
 	
 SolveyVal evalExpr(Expr:eqExpr(Expr lhs, Expr rhs), VENV env) {
 	if (boolval(b1) := evalExpr(lhs)) {
-		boolval(b2) := evalExpr(rhs) ? boolval(b1 == b2) : errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is boolean the other is not");
+		boolval(b2) := evalExpr(rhs) ? boolval(b1 == b2) : 
+		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is boolean the other is not");
 	}	else if (numberval(n1) := evalExpr(lhs)) {
-		numberval(n2) := evalExpr(rhs) ? boolval(n1 == n2) : errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a number the other is not");
-	}
+		numberval(n2) := evalExpr(rhs) ? boolval(n1 == n2) : 
+		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a number the other is not");
+	} else if (stringval(s1) := evalExpr(lhs)) {
+		stringval(s2) := evalExpr(rhs) ? boolval(n1 == n2) : 
+		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a string the other is not");
+	} else if (stringval(s1) := evalExpr(lhs)) {
+		stringval(s2) := evalExpr(rhs) ? boolval(n1 == n2) : 
+		errorval(Expr@location, "Equality Operator requires two arguments of the same type, one is a string the other is not");
+	} 
 	//(boolval(b1) := evalExpr(lhs) && ) ? 
 	//boolval(b1 == b2) : 
 	//errorval(Expr@location, "OR operation requires boolean arguments on both sides");
