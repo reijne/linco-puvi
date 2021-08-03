@@ -5,5 +5,11 @@ x := 4
 if (x > 3) 
 	output("bigger")
 else 
-	output("smaller or equal")
+	output(2 + "something")
 end if
+
+number function getSome(number x)
+	return x^2
+end function
+
+getSome(2)

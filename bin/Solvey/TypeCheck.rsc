@@ -5,13 +5,24 @@ import Node;
 import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
 
-private alias varName = str;
+public alias Name = str;
 // https://tutor.rascal-mpl.org/Recipes/Languages/Pico/Typecheck/Typecheck.html#/Recipes/Languages/Pico/Typecheck/Typecheck.html
-// Type environment
-alias TENV = tuple[ map[varName, Type] symbols, list[tuple[loc l, str msg]] errors];
+
+// Type environment, 
+// Symbols :: variables, functions with their corresponding type
+// FunParams :: the parameters and types for a defined function
+// Errors :: A collection of all the found errors while type checking the program
+alias TENV = tuple[ map[Name, Type] symbols, map[Name, list[tuple[Name,Type]]] funParams, list[tuple[loc l, str msg]] errors];
+
+// Last defined function
+str lastFunc = "";
+// Boolean used for nested function checking
+bool inFunc = false;
+// Boolean used for return checking
+bool hasReturned = false;
 
 // Add a variable and its type to the symboltable in the type environment
-TENV addSymbol(TENV env, varName name, Type t) {
+TENV addSymbol(TENV env, Name name, Type t) {
 	env.symbols[name] = t;
 	return env;
 } 
@@ -20,11 +31,31 @@ TENV addSymbol(TENV env, varName name, Type t) {
 TENV addError(TENV env, loc l, str msg) = env[errors = env.errors + <l, msg>];
 
 // Constructing a required message
-str expected(Type t, str got) = "Expected <getName(t)>, got <got>";                 
+str expected(Type t, str got) = "Expected a <out(t)>, got <got>";                 
 str expected(Type t1, Type t2) = expected(t1, getName(t2));
+str out(Type t) {
+	if (t == t_num()) return "number";
+	if (t == t_str()) return "string";
+	if (t == t_bool()) return "bool";
+	if (t == t_list()) return "list[]";
+	return "unkown type";
+}
+
+// Location based wrapper for checkProgram, envokes the building into AST.
+TENV checkProgram(loc l) = checkProgram(sly_build(l));
+
+// Entry point for typechecking on Program type
+TENV checkProgram(Program p) {
+	if(program(list[Stmt] statements) := p){
+     env = <(),(),[]>;
+     for (stmt <- statements) env = checkStmt(stmt, env);
+     return env;
+  } else
+    throw "Cannot happen";
+}
 
 // Expression checking
-TENV checkExpr(Expr:idExpr(varName id), Type req, TENV env) {
+TENV checkExpr(Expr:idExpr(Name id), Type req, TENV env) {
 	if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>");
 	expectedType = env.symbols[id];
 	return req == expectedType ? env : addError(env, Expr@location, expected(req, expectedType));
@@ -48,8 +79,13 @@ TENV checkExpr(Expr:listExpr(list[Expr] items), Type req, TENV env) {
 
 // Function call, check if its defined, and check all the arguments
 TENV checkExpr(Expr:funCall(str id, list[Expr] args), Type req, TENV env) {
-	if (!env.symbols[id]?) tenv = addError(env, Expr@location, "Undeclared function <id> called");
-	for (arg <- args)  tenv = checkExpr(arg, req, env);
+	if (!env.symbols[id]?) env = addError(env, Expr@location, "Undeclared Function <id> called");
+	if (size(env.funParams[id]) != size(args)) 
+		env = addError(env, Expr@location, "<out(req)> function <id> expects <size(env.funParams[id])> arguments, but got <size(args)>");
+	for (i <- [0 .. size(env.funParams[id])]) {
+		if (i >= size(args)) break;
+		env = checkExpr(args[i], env.funParams[id][i][1], env);
+	}
 	return env;
 }
 
@@ -97,37 +133,112 @@ TENV checkExpr(Expr:notExpr(Expr expr), Type req, TENV env) =
 
 // Comparison expressions 
 TENV checkExpr(Expr:eqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
-	if (req == t_num()) return checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
-	else if (req == t_str()) return checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
-	else if (req == t_bool()) return checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
-	else if (req == t_list()) return checkExpr(lhs, t_list(), checkExpr(rhs, t_list(), env));
-	else 	return addError(env, Expr@location, expected(req, "unexpected type")); 
+	env0 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env1 = checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
+	env2 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
+	env3 = checkExpr(lhs, t_list(), checkExpr(rhs, t_list(), env));
+	TENV correctEnv = env0;
+	for (TENV envN <- [env1, env2, env3]) if (size(envN.errors) < size(correctEnv.errors)) correctEnv = envN;
+	if (correctEnv == env0 && size(env0.errors) == size(env1.errors)) 
+		correctEnv = addError(env, Expr@location,"Equality expects two equal types, but this was not given");
+	return correctEnv;  
 }
 
 TENV checkExpr(Expr:gtExpr(Expr lhs, Expr rhs), Type req, TENV env) =
-	req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
+	req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
 							  : addError(env, Expr@location, "The greater-than operator (\>) expects two numeric values on either side, but was given something else.");
 
 TENV checkExpr(Expr:gteExpr(Expr lhs, Expr rhs), Type req, TENV env) =
-	req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
+	req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
 							  : addError(env, Expr@location, "The greater-than-or-equal operator (\>=) expects two numeric values on either side, but was given something else.");
 
 
 TENV checkExpr(Expr:ltExpr(Expr lhs, Expr rhs), Type req, TENV env) =
-	req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
+	req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
 							  : addError(env, Expr@location, "The less-than operator (\<) expects two numeric values on either side, but was given something else.");	
 							  
 
 TENV checkExpr(Expr:lteExpr(Expr lhs, Expr rhs), Type req, TENV env) =
-	req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
+	req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
 							  : addError(env, Expr@location, "The less-than-or-equal operator (\<=) expects two numeric values on either side, but was given something else.");
-							  
+//							  
 // Statements
-TENV checkStmt(Stmt:exprStmt(Expr expr), Type req, TENV env) = 
+//
+TENV checkStmt(Stmt:exprStmt(Expr expr), TENV env) = 
 	checkExpr(expr, t_num(), env);
 
-TENV checkStmt(Stmt:decl(Type datatype, str id) , Type req, TENV env) {
-	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you cannot declare the same variable twice.");
+TENV checkStmt(Stmt:decl(Type datatype, str id), TENV env) {
+	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you cannot declare a variable once.");
 	else return addSymbol(env, id, datatype);
 }
+
+TENV checkStmt(Stmt:listDecl(Type datatype, str id), TENV env) {
+	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you cannot declare a variable once.");
+	else return addSymbol(env, id, t_list());
+}
+
+TENV checkStmt(Stmt:returnStmt(Expr expr), TENV env) {
+	if (!env.symbols[lastFunc]?) return addError(env, Stmt@location, "Return outside Function body. Cannot return any value if not inside a Function.");
+	hasReturned = true;
+	return checkExpr(expr, env.symbols[lastFunc], env);
+}
+TENV checkStmt(Stmt:assStmt(str id, Expr expr), TENV env) {
+	if (!env.symbols[id]?) return addError(env, Stmt@location, "Variable not found. Attempting to assign a value to an undeclared variable.");
+	return checkExpr(expr, env.symbols[id], env);
+}
+
+TENV checkStmt(Stmt:inputStmt(), TENV env) = env;
+
+// TODO figure out how to fucking make any type required lol
+TENV checkStmt(Stmt:outputStmt(Expr expr), TENV env) = env;
+
+TENV checkStmt(Stmt:ifStmt(Expr cond, list[Stmt] block) , TENV env) {
+	env = checkExpr(cond, t_bool(), env);
+	for (stmt <- block) env = checkStmt(stmt, env);
+	return env;
+}
+
+TENV checkStmt(Stmt:ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBlock) , TENV env) {
+	env = checkExpr(cond, t_bool(), env);
+	for (stmt <- (thenBlock + elseBlock)) env = checkStmt(stmt, env);
+	return env;
+}
+
+TENV checkStmt(Stmt:repeatStmt(int iter, list[Stmt]block), TENV env) {
+	for (stmt <- block) env = checkStmt(stmt, env);
+	return env;
+}
+
+TENV checkStmt(Stmt:whileStmt(Expr cond, list[Stmt] block), TENV env) {
+	env = checkExpr(cond, t_bool(), env);
+	for (stmt <- block) env = checkStmt(stmt, env);
+	return env;
+}
+
+TENV checkStmt(Stmt:funDef(Type datatype, str id, list[Parameter] parameters, list[Stmt] block), TENV env) {
+	if (env.symbols[id]?) env = addError(env, Stmt@location, "Function redeclaration. Overwriting already existing variable or Function by this definition.");
+	if (inFunc) env = addError(env, Stmt@location, "Nested Functions. Trying to declare a Function within a Function is not supported.");
+	inFunc = true;
+	hasReturned = false;
+	lastFunc = id;
+	env.symbols[id] = datatype;
+	env = addParameters(id, parameters, env);
+	for (stmt <- block) env = checkStmt(stmt, env);
+	if (!hasReturned) env = addError(env, Stmt@location, "Missing return. <out(datatype)> function <id> needs to return a <out(datatype)> value");
+	inFunc = false;
 	
+	return env;
+}
+
+TENV addParameters(str id, list[Parameter] parameters, TENV env) {
+	list[tuple[Name,Type]] paramTypes = [];
+	for (param <- parameters) {
+		paramTypes = addParam(param, paramTypes);
+	}
+	env.funParams[id] = paramTypes;
+	return env;
+}
+
+list[tuple[Name,Type]] addParam(parameter(Type datatype, str id), list[tuple[Name,Type]] paramTypes) {
+	return paramTypes += <id, datatype>;
+}

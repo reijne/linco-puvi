@@ -73,7 +73,7 @@ test bool completeTraversal() {
 	Execute the specified function while disabling the verbose output.
 }
 private void executeTestFunction(bool() fun) {
-	Solvey::tests::AbstractTest::isPrintingDisabled = true;
+	Solvey::tests::AbstractTest::doPrint = false;
 	fun();
-	Solvey::tests::AbstractTest::isPrintingDisabled = false; 
+	Solvey::tests::AbstractTest::doPrint = true; 
 }

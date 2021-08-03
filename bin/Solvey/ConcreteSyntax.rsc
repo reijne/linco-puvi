@@ -38,7 +38,7 @@ lexical Comment
 start syntax Program = program: Stmt* statements;
 
 // Block of code
-syntax Block = block: Stmt* statements;
+//syntax Block = block: Stmt* statements;
 
 // All types
 syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
@@ -85,13 +85,11 @@ syntax Stmt = exprStmt: Expr expr
 					   | assStmt: ID id ":=" Expr expr
 					   | inputStmt: "input" "(" ")"
 					   | outputStmt: "output" "(" Expr expr ")"
-					   | ifStmt: "if" "(" Expr cond ")"  Block block "end" "if"
-					   | ifElseStmt: "if" "(" Expr cond ")"  Block thenBlock "else" Block elseBlock "end" "if"
-					   | repeatStmt: "repeat" "(" Number iter ")" Block block "end" "repeat"
-					   | whileStmt: "while" "(" Expr cond ")"  Block block "end" "while"
-					   | funDef: Type datatype "function" ID id "(" Parameters parameters ")"  Block block "end" "function";
-
-syntax Parameters = Parameter*;
+					   | ifStmt: "if" "(" Expr cond ")"  Stmt* block "end" "if"
+					   | ifElseStmt: "if" "(" Expr cond ")"  Stmt* thenBlock "else" Stmt* elseBlock "end" "if"
+					   | repeatStmt: "repeat" "(" Number iter ")" Stmt* block "end" "repeat"
+					   | whileStmt: "while" "(" Expr cond ")"  Stmt* block "end" "while"
+					   | funDef: Type datatype "function" ID id "(" {Parameter ","}* parameters ")"  Stmt* block "end" "function";
 
 syntax Parameter = parameter: Type datatype ID id;
 
@@ -108,7 +106,7 @@ keyword Keyword = "string" | "number" | "bool" | "list" |
 									
 // Keep track of the locations in the code
 anno loc ID@location;
-
+anno loc Comment@location;
 anno loc Expr@location;
 anno loc Stmt@location;
 

@@ -11,7 +11,7 @@ import Solvey::tests::Setup;
 
 private loc thisFile = |project://Puzzle/src/Solvey/tests/AbstractTest.rsc|;
 
-public bool isPrintingDisabled = false;
+public bool doPrint = true;
 
 @doc {
 	Gather a list of all the existing test bool functions without parameters and append them to this file, overwriting the last line.
@@ -60,15 +60,15 @@ bool buildLine(str line) {
 	Foreach code snippet write it to file and attempt to build, then report on the results.
 }
 bool buildLines(str testName, list[str] lines) {
-	if (!isPrintingDisabled) print("\n" + testName+"\n---------------------------------------------------------------");
+	if (!doPrint) print("\n" + testName+"\n---------------------------------------------------------------");
 	if (!Solvey::tests::Setup::isSetup) Solvey::tests::Setup::setupTestFile();
 	bool success = true;
 	for (line <- lines) {
-		if (!isPrintingDisabled) print("\n" + line);
+		if (!doPrint) print("\n" + line);
 		success = success && buildLine(line);
-		if (!isPrintingDisabled)print("\n|^|^| success = " + toString(success) + "\n");		
+		if (!doPrint)print("\n|^|^| success = " + toString(success) + "\n");		
 	}
-	if (!isPrintingDisabled)print("\n======================================");
+	if (!doPrint)print("\n======================================");
 	return success;
 }
 
@@ -135,7 +135,8 @@ test bool whileStatement() {
 }
 
 test bool functionDefinition() {
-	return buildLines("Function definition", ["bool function isDivisiblebyThree(number x)\n\treturn x % 3 == 0\nend function"]);
+	return buildLines("Function definition", ["bool function isDivisiblebyThree(number x)\n\treturn x % 3 == 0\nend function", 
+																		"bool function isDivisiblebyThree(number x, string s)\n\treturn x % 3 == 0\nend function"]);
 }
 
 test bool functionCall() {

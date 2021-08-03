@@ -4,57 +4,61 @@ number num2
 bool bab
 number x
  
-x = num1 ** num2
-x = num1 ^ num2
+x :=num1 ** num2
+x :=num1 ^ num2
 
-x = num1 * num2
-x = num1 / num2
-x = num1 % num2
-x = num1 + num2
-x = num1 - num2
+x :=num1 * num2
+x :=num1 / num2
+x :=num1 % num2
+x :=num1 + num2
+x :=num1 - num2
 
 string s2
-s2 = "ss" + "sss"
+s2 :="ss" + "sss"
 
 bool bol
-bol = false || true
+bol :=false || true
 bool bol2 
-bol2 = false or true
+bol2 :=false or true
 bool bol3 
-bol3 = false && true
+bol3 :=false && true
 bool bol4 
-bol4 = false and true
+bol4 :=false and true
 bool bol5
-bol5 = !true
+bol5 :=!true
 
 bool comp
-comp = 1 > 2
+comp :=1 > 2
 bool comp2
-comp2 = 1 >= 2
+comp2 :=1 >= 2
 bool comp3
-comp3 = 1 < 2
+comp3 :=1 < 2
 bool comp4
-comp4 = 1 >= 2
+comp4 :=1 >= 2
 
 if (comp == comp2)
-	comp2 = !comp
+	comp2 :=!comp
 end if
 
 2+2
 
 repeat (9)
-	x = x+1
+	x :=x+1
 end repeat
 
 bool succ
-succ = true
+succ :=true
 
 while (succ)
-	x = x + 1
+	x :=x + 1
 end while
 
 bool function isDivisiblebyThree(number x)
-	return x % 3 == 0
+	return (x % 2) == 0
+end function
+
+bool function isFunc(number x, string s)
+	return (x % 2) == 0
 end function
 
 isDivisiblebyThree(3)

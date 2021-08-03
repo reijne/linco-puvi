@@ -11,7 +11,7 @@ data Boolean = b_true()
 
 data Program = program(list[Stmt] statements); 
 
-data Block = block(list[Stmt] statements); 
+//data Block = block(); 
 
 data Type = t_str() 
 				   | t_num()  
@@ -51,17 +51,17 @@ data Stmt = exprStmt(Expr expr)
 				   | assStmt(str id, Expr expr) 
 				   | inputStmt() 
 				   | outputStmt(Expr expr) 
-				   | ifStmt(Expr cond, Block block) 
-				   | ifElseStmt(Expr cond, Block thenBlock, Block elseBlock) 
-				   | repeatStmt(int iter, Block block) 
-				   | whileStmt(Expr cond, Block block) 
-				   | funDef(Type datatype, str id, list[Parameter] parameters, Block block); 
+				   | ifStmt(Expr cond, list[Stmt] block) 
+				   | ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBlock) 
+				   | repeatStmt(int iter, list[Stmt]block) 
+				   | whileStmt(Expr cond, list[Stmt] block) 
+				   | funDef(Type datatype, str id, list[Parameter] parameters, list[Stmt] block); 
 
 data Parameter = parameter(Type datatype, str id); 
 
 anno loc Program@location;
 
-anno loc Block@location;
+//anno loc Block@location;
 
 anno loc Expr@location;
 anno loc Stmt@location;
