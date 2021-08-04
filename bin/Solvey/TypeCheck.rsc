@@ -5,7 +5,7 @@ import Node;
 import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
 
-public alias Name = str;
+private alias Name = str;
 // https://tutor.rascal-mpl.org/Recipes/Languages/Pico/Typecheck/Typecheck.html#/Recipes/Languages/Pico/Typecheck/Typecheck.html
 
 // Type environment, 

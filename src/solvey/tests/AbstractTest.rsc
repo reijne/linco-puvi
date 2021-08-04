@@ -148,7 +148,7 @@ test bool bracketExpression() {
 }
 
 test bool inoutput() {
-	return buildLines("IO time", ["input()", "output(\"hello world\")"]);
+	return buildLines("IO time", ["input()", "x := input()", "output(\"hello world\")"]);
 }
 
 // DO NOT REMOVE OR ALTER THE FOLLOWING LIST DECLARATION.
