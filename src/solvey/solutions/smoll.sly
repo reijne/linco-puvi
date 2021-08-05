@@ -2,14 +2,18 @@ number x
 number y
 x := 4
 
-if (x > 3) 
+if (x < 3) 
 	output("bigger")
 else 
-	output(2 + "something")
+	output("something")
 end if
 
 number function getSome(number x)
 	return x^2
 end function
 
-getSome(2)
+y := getSome(2)
+
+output(y)
+output(y+2)
+y := y + "something"

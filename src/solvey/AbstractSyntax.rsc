@@ -62,8 +62,6 @@ data Parameter = parameter(Type datatype, str id);
 
 anno loc Program@location;
 
-//anno loc Block@location;
-
 anno loc Expr@location;
 anno loc Stmt@location;
 

@@ -9,7 +9,7 @@ extend lang::std::Id;
 //  = id: ([a-zA-Z_$] [a-zA-Z0-9_$]* !>> [a-zA-Z0-9_$]) sval \ Keyword;
 
 // Types of the solvey language
-lexical String = "\"" ![\"]*  "\"";
+lexical String = ![\"]*;
 //lexical Number = @category="Value" ([0-9]+([.][0-9]+?)?);
 lexical Number = [0-9]+;
 	 					   //|  [0-9]+"."[0-9]+;
@@ -45,7 +45,7 @@ syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
 
 // All possible expressions
 syntax Expr = idExpr: ID id !>> "("
-					  | strExpr: String string
+					  | strExpr: "\""String string "\""
 					  | numExpr: Number number
 					  | boolExpr: Boolean boolean
 					  | listExpr: "[" {Expr ","}* items "]"

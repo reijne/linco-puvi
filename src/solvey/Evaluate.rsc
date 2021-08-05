@@ -15,6 +15,7 @@ data SolveyVal = stringval(str s)
 						  | boolval(bool b)
 						  | listval(list[value] li)
 						  | errorval(loc lo, str msg);
+						  
 alias Func = tuple[Type datatype, list[Parameter] parameters, list[Stmt] block];
 alias VENV = tuple[map[Name, SolveyVal] values, list[value] outputs, map[Name, Func] functions]; 	
 
@@ -27,6 +28,7 @@ value unwrap(stringval(str s)) = s;
 value unwrap(numberval(int n)) = n;
 value unwrap(boolval(bool b)) =b;
 list[value] unwrap(listval(list[value] li)) = li;
+SolveyVal unwrap(errorval(loc lo, str msg)) = errorval(lo, msg);
 
 // Entry point to start evaluating a file
 VENV evalProgram(loc file) = evalProgram(sly_build(file));
@@ -57,7 +59,17 @@ SolveyVal evalExpr(Expr:listExpr(list[Expr]  items), VENV env) {
 // TODO add input using the list of expr
 SolveyVal evalExpr(Expr:inputExpr(), VENV env) = errorval(Expr@location, "Input expr not yet evaluated");
 
-SolveyVal evalExpr(Expr:funCall(str id, list[Expr] args), VENV env) = errorval(Expr@location, "function calls are not evaluated");
+SolveyVal evalExpr(Expr:funCall(str id, list[Expr] args), VENV env) {
+	tuple[Type datatype, list[Parameter] parameters, list[Stmt] block] function = env.functions[id];
+	VENV localEnv = env;
+	for (i <- [0 .. size(function.parameters)]) {
+		param = function.parameters[i];
+		localEnv.values[param.id] = evalExpr(args[i], localEnv);
+	}
+	currentFunction = id;
+	for (stmt <- function.block) localEnv = evalStmt(stmt, localEnv);
+	return localEnv.values[id];
+}
 
 SolveyVal evalExpr(Expr:bracketExpr(Expr expr), VENV env) = evalExpr(expr, env);
 
@@ -167,7 +179,10 @@ VENV evalStmt(Stmt:assStmt(str id, Expr expr), VENV env) {
 }
 
 VENV evalStmt(Stmt:outputStmt(Expr expr), VENV env) {
-	env.outputs = [env.outputs, unwrap(evalExpr(expr, env))];
+	list[value] newoutputs = [];
+	for (out <- env.outputs) newoutputs += out;
+	newoutputs += unwrap(evalExpr(expr, env));
+	env.outputs = newoutputs;
 	return env;
 }
 
