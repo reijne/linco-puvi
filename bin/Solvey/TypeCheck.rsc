@@ -1,7 +1,6 @@
 module Solvey::TypeCheck
 
 import Prelude;
-import Node;
 import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
 
@@ -29,12 +28,21 @@ TENV addSymbol(TENV env, Name name, Type t) {
 	return env;
 } 
 
+str getErrorString(TENV env) {
+	str errorstring = "";
+	for (tuple[loc l, int nid, str msg] e <- env.errors) 
+		errorstring += "<e.nid>|<e.msg>\n";
+	return errorstring[..-1];
+}
+
 // Add an error message to type environment
 TENV addError(TENV env, loc l, str msg) = env[errors = env.errors + <l, nodeID, msg>];
 
-// Constructing a required message
+// Constructing an expected type message
 str expected(Type t, str got) = "Expected a <out(t)>, got <got>";                 
-str expected(Type t1, Type t2) = expected(t1, getName(t2));
+str expected(Type t, Type got) = "Expected a <out(t)>, got <out(got)>";  
+
+// Return the verbose form of a type
 str out(Type t) {
 	if (t == t_num()) return "number";
 	if (t == t_str()) return "string";
@@ -48,7 +56,7 @@ TENV checkProgram(loc l) = checkProgram(sly_build(l));
 
 // Entry point for typechecking on Program type
 TENV checkProgram(Program p) {
-	nodeID += 1;
+	nodeID = 0;
 	if(program(list[Stmt] statements) := p){
      env = <(),(),[]>;
      for (stmt <- statements) env = checkStmt(stmt, env);

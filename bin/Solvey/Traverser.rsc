@@ -109,6 +109,10 @@ public str labeledTraverse(lteExpr(Expr lhs,Expr rhs))  =
 -out-Expr-rhs
 out-Expr-lteExpr";
 
+private str labeledTraverse(inputExpr()) = 
+    "in-Expr-inputExpr
+    out-Expr-inputExpr";
+
 public str labeledTraverse(idExpr(str id))  =
 "in-Expr-idExpr
 out-Expr-idExpr";
@@ -205,13 +209,6 @@ public str labeledTraverse(parameter(Type datatype,str id))  =
 -out-Type-datatype
 out-Parameter-parameter";
 
-public str labeledTraverse(block(list[Stmt] statements))  =
-"in-Block-block
--in-list[Stmt]-statements
-"+"<for (statementsItem <- statements){><labeledTraverse(statementsItem)>\n<}>"[..-1]+"
--out-Stmt-statements
-out-Block-block";
-
 public str labeledTraverse(program(list[Stmt] statements))  =
 "in-Program-program
 -in-list[Stmt]-statements
@@ -234,7 +231,24 @@ public str labeledTraverse(decl(Type datatype,str id))  =
 -out-Type-datatype
 out-Stmt-decl";
 
-public str labeledTraverse(funDef(Type datatype,str id,list[Parameter] parameters,Block block))  =
+public str labeledTraverse(ifStmt(Expr cond,list[Stmt] block))  =
+"in-Stmt-ifStmt
+-in-Expr-cond
+<labeledTraverse(cond)>
+-out-Expr-cond
+-in-list[Stmt]-block
+"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
+-out-Stmt-block
+out-Stmt-ifStmt";
+
+public str labeledTraverse(exprStmt(Expr expr))  =
+"in-Stmt-exprStmt
+-in-Expr-expr
+<labeledTraverse(expr)>
+-out-Expr-expr
+out-Stmt-exprStmt";
+
+public str labeledTraverse(funDef(Type datatype,str id,list[Parameter] parameters,list[Stmt] block))  =
 "in-Stmt-funDef
 -in-Type-datatype
 <labeledTraverse(datatype)>
@@ -242,10 +256,23 @@ public str labeledTraverse(funDef(Type datatype,str id,list[Parameter] parameter
 -in-list[Parameter]-parameters
 "+"<for (parametersItem <- parameters){><labeledTraverse(parametersItem)>\n<}>"[..-1]+"
 -out-Parameter-parameters
--in-Block-block
-<labeledTraverse(block)>
--out-Block-block
+-in-list[Stmt]-block
+"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
+-out-Stmt-block
 out-Stmt-funDef";
+
+public str labeledTraverse(ifElseStmt(Expr cond,list[Stmt] thenBlock,list[Stmt] elseBlock))  =
+"in-Stmt-ifElseStmt
+-in-Expr-cond
+<labeledTraverse(cond)>
+-out-Expr-cond
+-in-list[Stmt]-thenBlock
+"+"<for (thenBlockItem <- thenBlock){><labeledTraverse(thenBlockItem)>\n<}>"[..-1]+"
+-out-Stmt-thenBlock
+-in-list[Stmt]-elseBlock
+"+"<for (elseBlockItem <- elseBlock){><labeledTraverse(elseBlockItem)>\n<}>"[..-1]+"
+-out-Stmt-elseBlock
+out-Stmt-ifElseStmt";
 
 public str labeledTraverse(outputStmt(Expr expr))  =
 "in-Stmt-outputStmt
@@ -254,18 +281,28 @@ public str labeledTraverse(outputStmt(Expr expr))  =
 -out-Expr-expr
 out-Stmt-outputStmt";
 
-private str labeledTraverse(inputStmt()) = 
-    "in-Stmt-inputStmt
-    out-Stmt-inputStmt";
+public str labeledTraverse(repeatStmt(int iter,list[Stmt] block))  =
+"in-Stmt-repeatStmt
+-in-list[Stmt]-block
+"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
+-out-Stmt-block
+out-Stmt-repeatStmt";
 
-public str labeledTraverse(whileStmt(Expr cond,Block block))  =
+public str labeledTraverse(assStmt(str id,Expr expr))  =
+"in-Stmt-assStmt
+-in-Expr-expr
+<labeledTraverse(expr)>
+-out-Expr-expr
+out-Stmt-assStmt";
+
+public str labeledTraverse(whileStmt(Expr cond,list[Stmt] block))  =
 "in-Stmt-whileStmt
 -in-Expr-cond
 <labeledTraverse(cond)>
 -out-Expr-cond
--in-Block-block
-<labeledTraverse(block)>
--out-Block-block
+-in-list[Stmt]-block
+"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
+-out-Stmt-block
 out-Stmt-whileStmt";
 
 public str labeledTraverse(returnStmt(Expr expr))  =
@@ -281,48 +318,4 @@ public str labeledTraverse(listDecl(Type datatype,str id))  =
 <labeledTraverse(datatype)>
 -out-Type-datatype
 out-Stmt-listDecl";
-
-public str labeledTraverse(exprStmt(Expr expr))  =
-"in-Stmt-exprStmt
--in-Expr-expr
-<labeledTraverse(expr)>
--out-Expr-expr
-out-Stmt-exprStmt";
-
-public str labeledTraverse(ifStmt(Expr cond,Block block))  =
-"in-Stmt-ifStmt
--in-Expr-cond
-<labeledTraverse(cond)>
--out-Expr-cond
--in-Block-block
-<labeledTraverse(block)>
--out-Block-block
-out-Stmt-ifStmt";
-
-public str labeledTraverse(ifElseStmt(Expr cond,Block thenBlock,Block elseBlock))  =
-"in-Stmt-ifElseStmt
--in-Expr-cond
-<labeledTraverse(cond)>
--out-Expr-cond
--in-Block-thenBlock
-<labeledTraverse(thenBlock)>
--out-Block-thenBlock
--in-Block-elseBlock
-<labeledTraverse(elseBlock)>
--out-Block-elseBlock
-out-Stmt-ifElseStmt";
-
-public str labeledTraverse(assStmt(str id,Expr expr))  =
-"in-Stmt-assStmt
--in-Expr-expr
-<labeledTraverse(expr)>
--out-Expr-expr
-out-Stmt-assStmt";
-
-public str labeledTraverse(repeatStmt(int iter,Block block))  =
-"in-Stmt-repeatStmt
--in-Block-block
-<labeledTraverse(block)>
--out-Block-block
-out-Stmt-repeatStmt";
 

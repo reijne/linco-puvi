@@ -110,3 +110,8 @@ void updateSceney(str labeledTraversal) {
 	print("sent RPC:: updateSceney\n");
 }
 
+void updateErrors(str errorline) {
+	sendMessage(remoteCall("updateErrors", errorline, false));
+	print("sent RPC:: updateErrors\n");
+}
+

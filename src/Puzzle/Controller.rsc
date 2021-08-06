@@ -2,12 +2,15 @@ module Puzzle::Controller
 
 import IO;
 import IDE;
+import String;
 import Exception;
 
 import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
+import Solvey::TypeCheck;
 import Solvey::Traverser;
-import Solvey::NodeExtractor;
+import Tools::NodeExtractor;
+import Tools::GenerateTraverser;
 
 import Network::ClientController;
 
@@ -20,6 +23,8 @@ private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 private str showeyBuilder = "ShoweyBuilder";
 private str sceney = "Sceney";
+
+private str gameType = "";
 
 // private list[str] skippedCategories = [];
 // private bool skipNesting = false;
@@ -59,23 +64,51 @@ public void updateSceney() {
 	} catch e: print("parse error <e>");	
 }
 
-public void makePuzzle() {
+public void updateErrors() {
+	str errorstring = getErrorString(checkProgram(solution));
+	updateErrors(errorstring);
+}
+
+public void setup() {
 	sly_register();
-	startApplication(os, sceney);
-	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	genTraverser();
+	//startApplication(os, sceney);
 	createSceney();
 	print("Sceney created\n");
 	updateSceney();
 	print("Sceney populated\n");
+}
+
+public void updater() {
 	str oldContent = readFile(solution);
 	while (true) {
 		newContent = readFile(solution);
 		if (newContent != oldContent) {
 			updateSceney();
+			
+			if (gameType == "shooter") updateErrors();
+			else if (gameType == "platformer") print("lol this is not supported yet");
+			
+			print("TypeChecking\n <checkProgram(solution)>");
+			
+			if (contains(newContent, "stopnow")) break;
 			oldContent = newContent;
 		}
 	}
 	safeStopClient();
+}
+
+public void makePuzzle() {
+	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	setup();
+	updater();
+}
+
+public void makeShooter() {
+	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	setup();
+	gameType = "shooter";
+	updater();
 }
 
 // Make multiple choice puzzle

@@ -1,1 +1,11 @@
 // Type some code here and pray to the gods it shows in the scene :)
+// Type some code here and pray to the gods it shows in the scene :)
+
+bool function isFunc(number x, string s)
+	return (x % 2) == 0
+end function
+
+number someNum
+someNum := isFunc(3, "y")
+someNum := "string"
+	
