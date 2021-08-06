@@ -1,11 +1,11 @@
 // Type some code here and pray to the gods it shows in the scene :)
-// Type some code here and pray to the gods it shows in the scene :)
+number x
+x := true
+x := true
 
-bool function isFunc(number x, string s)
-	return (x % 2) == 0
+bool function succ() 
+	return true
 end function
 
-number someNum
-someNum := isFunc(3, "y")
-someNum := "string"
-	
+x := true
+

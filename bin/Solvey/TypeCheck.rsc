@@ -56,7 +56,7 @@ TENV checkProgram(loc l) = checkProgram(sly_build(l));
 
 // Entry point for typechecking on Program type
 TENV checkProgram(Program p) {
-	nodeID = 0;
+	nodeID = -1;
 	if(program(list[Stmt] statements) := p){
      env = <(),(),[]>;
      for (stmt <- statements) env = checkStmt(stmt, env);
@@ -72,6 +72,16 @@ tuple[bool, Type] getParam(str id, TENV env) {
 		}
 	} 
 	return <false, t_list()>;
+}
+
+TENV checkType(Type t, TENV env) {
+	nodeID += 1;
+	return env;
+}
+
+TENV checkBoolean(Boolean b, TENV env) {
+	nodeID += 1;
+	return env;
 }
 
 // Expression checking
@@ -102,7 +112,8 @@ TENV checkExpr(Expr:numExpr(int number), Type req, TENV env) {
 }
 
 TENV checkExpr(Expr:boolExpr(Boolean boolean), Type req, TENV env) {
-	nodeID += 1; 
+	nodeID += 1;
+	checkBoolean(boolean, env); 
 	return req == t_bool() ? env : addError(env, Expr@location, expected(req, "boolean"));
 } 
 
@@ -241,12 +252,14 @@ TENV checkStmt(Stmt:exprStmt(Expr expr), TENV env) {
 }
 
 TENV checkStmt(Stmt:decl(Type datatype, str id), TENV env) {
+	checkType(datatype, env);
 	nodeID += 1;
-	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you cannot declare a variable once.");
+	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you can only declare a variable once.");
 	else return addSymbol(env, id, datatype);
 }
 
 TENV checkStmt(Stmt:listDecl(Type datatype, str id), TENV env) {
+	checkType(datatype, env);
 	nodeID += 1;
 	if (env.symbols[id]?) return addError(env, Stmt@location, "Already declared variable found, you cannot declare a variable once.");
 	else return addSymbol(env, id, t_list());
@@ -298,6 +311,7 @@ TENV checkStmt(Stmt:whileStmt(Expr cond, list[Stmt] block), TENV env) {
 }
 
 TENV checkStmt(Stmt:funDef(Type datatype, str id, list[Parameter] parameters, list[Stmt] block), TENV env) {
+	checkType(datatype, env);
 	nodeID += 1;
 	if (env.symbols[id]?) env = addError(env, Stmt@location, "Function redeclaration. Overwriting already existing variable or Function by this definition.");
 	if (inFunc) env = addError(env, Stmt@location, "Nested Functions. Trying to declare a Function within a Function is not supported.");
@@ -309,7 +323,6 @@ TENV checkStmt(Stmt:funDef(Type datatype, str id, list[Parameter] parameters, li
 	for (stmt <- block) env = checkStmt(stmt, env);
 	if (!hasReturned) env = addError(env, Stmt@location, "Missing return. <out(datatype)> function <id> needs to return a <out(datatype)> value");
 	inFunc = false;
-	
 	return env;
 }
 
@@ -323,5 +336,7 @@ TENV addParameters(str id, list[Parameter] parameters, TENV env) {
 }
 
 list[tuple[Name,Type]] addParam(parameter(Type datatype, str id), list[tuple[Name,Type]] paramTypes) {
+	checkType(dataType, env);
+	nodeID += 1;
 	return paramTypes += <id, datatype>;
 }
