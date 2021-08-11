@@ -11,12 +11,11 @@ data Boolean = b_true()
 
 data Program = program(list[Stmt] statements); 
 
-//data Block = block(); 
-
 data Type = t_str() 
 				   | t_num()  
 				   | t_bool() 
-				   | t_list(); 
+				   | t_list()
+				   | t_undefined(); 
 
 data Expr = idExpr(str id) 
 				  | strExpr(str string) 

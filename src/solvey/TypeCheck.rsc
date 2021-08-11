@@ -43,13 +43,11 @@ str expected(Type t, str got) = "Expected a <out(t)>, got <got>";
 str expected(Type t, Type got) = "Expected a <out(t)>, got <out(got)>";  
 
 // Return the verbose form of a type
-str out(Type t) {
-	if (t == t_num()) return "number";
-	if (t == t_str()) return "string";
-	if (t == t_bool()) return "bool";
-	if (t == t_list()) return "list[]";
-	return "unkown type";
-}
+str out(t_num()) = "number";
+str out(t_str()) = "string";
+str out(t_bool()) = "bool";
+str out(t_list()) = "list[]";
+str out(t_undefined()) = "undefined";
 
 // Location based wrapper for checkProgram, envokes the building into AST.
 TENV checkProgram(loc l) = checkProgram(sly_build(l));
@@ -89,15 +87,16 @@ TENV checkExpr(Expr:idExpr(Name id), Type req, TENV env) {
 	nodeID += 1;
 	if (inFunc) {
 		tuple[bool, Type] paramType = getParam(id, env);
-		if (!paramType[0] && !env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>"); 
-		if (paramType[0]) {
+		if (!paramType[0]) 
+			if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>"); 
+			else return req == env.symbols[id] ? env : addError(env, Expr@location, expected(req, env.symbols[id]));
+		else {
 			return req == paramType[1] ? env : addError(env, Expr@location, expected(req, paramType[1]));
 		}
 	} else {
 		if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>");
 		return req == env.symbols[id] ? env : addError(env, Expr@location, expected(req, env.symbols[id]));
 	}
-	throw("Cannot happen");
 }
 
 // Typed expressions
@@ -151,32 +150,37 @@ TENV checkExpr(Expr:bracketExpr(Expr expr), Type req, TENV env) {
 // Arithmetic Expressions
 TENV checkExpr(Expr:powExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	return req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_num() ? env1 : env2;
 }			
 							  
 TENV checkExpr(Expr:mulExpr(Expr lhs, Expr rhs), Type req, TENV env)  {
 	nodeID += 1; 
-	return req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_num() ?  env1 : env2;
 }							  
 	
 TENV checkExpr(Expr:divExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	return req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_num() ? env1 : env2;
 }
 							  
 TENV checkExpr(Expr:modExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	return req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_num() ? env1 : env2;
 }							  
 							  
 TENV checkExpr(Expr:minExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	return req == t_num() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_num() ? env1 : env2;
 }
 
 // Addition expression which also support string type
@@ -184,35 +188,41 @@ TENV checkExpr(Expr:addExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
 	if (req == t_num()) return checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	else if (req == t_str()) return checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
-	else 	return addError(env, Expr@location, expected(req, "unexpected type")); 
+	checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
+	return addError(env, Expr@location, expected(req, "unexpected type")); 
 }
 
 TENV checkExpr(Expr:andExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_bool() ? env1 : env2;
 }
 
 TENV checkExpr(Expr:orExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env)) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_bool() ? env1 : env2;
 }						
 							  
 TENV checkExpr(Expr:notExpr(Expr expr), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(expr, t_bool(), env) 
-							  : addError(env, Expr@location, expected(req, "unexpected type"));						  
+	env1 = checkExpr(expr, t_bool(), env);
+	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	return req == t_bool() ? env1 : env2; 						  
 }
 
 // Comparison expressions 
 TENV checkExpr(Expr:eqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
 	env0 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	int localNodeID = nodeID;
 	env1 = checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
 	env2 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
 	env3 = checkExpr(lhs, t_list(), checkExpr(rhs, t_list(), env));
 	TENV correctEnv = env0;
+	nodeID = localNodeID;
 	for (TENV envN <- [env1, env2, env3]) if (size(envN.errors) < size(correctEnv.errors)) correctEnv = envN;
 	if (correctEnv == env0 && size(env0.errors) == size(env1.errors)) 
 		correctEnv = addError(env, Expr@location,"Equality expects two equal types, but this was not given");
@@ -221,26 +231,30 @@ TENV checkExpr(Expr:eqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 
 TENV checkExpr(Expr:gtExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, "The greater-than operator (\>) expects two numeric values on either side, but was given something else.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)); 
+	env2 = addError(env, Expr@location, "The greater-than operator (\>) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	return req == t_bool() ? env1 : env2; 	
 }
 
 TENV checkExpr(Expr:gteExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, "The greater-than-or-equal operator (\>=) expects two numeric values on either side, but was given something else.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, "The greater-than-or-equal operator (\>=) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	return req == t_bool() ? env1 : env2; 	
 }
 
 TENV checkExpr(Expr:ltExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, "The less-than operator (\<) expects two numeric values on either side, but was given something else.");	
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, "The less-than operator (\<) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");	
+	return req == t_bool() ? env1 : env2; 	
 }							  
 
 TENV checkExpr(Expr:lteExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	return req == t_bool() ? checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)) 
-							  : addError(env, Expr@location, "The less-than-or-equal operator (\<=) expects two numeric values on either side, but was given something else.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
+	env2 = addError(env, Expr@location, "The less-than-or-equal operator (\<=) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	return req == t_bool() ? env1 : env2; 	
 }
 
 //							  
@@ -267,13 +281,18 @@ TENV checkStmt(Stmt:listDecl(Type datatype, str id), TENV env) {
 
 TENV checkStmt(Stmt:returnStmt(Expr expr), TENV env) {
 	nodeID += 1;
-	if (!env.symbols[lastFunc]?) return addError(env, Stmt@location, "Return outside Function body. Cannot return any value if not inside a Function.");
+	if (!env.symbols[lastFunc]?) env = addError(env, Stmt@location, "Return outside Function body. Cannot return any value if not inside a Function.");
 	hasReturned = true;
 	return checkExpr(expr, env.symbols[lastFunc], env);
 }
+
 TENV checkStmt(Stmt:assStmt(str id, Expr expr), TENV env) {
 	nodeID += 1;
-	if (!env.symbols[id]?) return addError(env, Stmt@location, "Variable not found. Attempting to assign a value to an undeclared variable.");
+	if (!env.symbols[id]?) {
+		env = addError(env, Stmt@location, "Variable not found. Attempting to assign a value to an undeclared variable.");
+		checkExpr(expr, t_undefined(), env);
+		return env;
+	}
 	return checkExpr(expr, env.symbols[id], env);
 }
 
@@ -329,14 +348,14 @@ TENV checkStmt(Stmt:funDef(Type datatype, str id, list[Parameter] parameters, li
 TENV addParameters(str id, list[Parameter] parameters, TENV env) {
 	list[tuple[Name,Type]] paramTypes = [];
 	for (param <- parameters) {
-		paramTypes = addParam(param, paramTypes);
+		paramTypes = addParam(param, paramTypes, env);
 	}
 	env.funParams[id] = paramTypes;
 	return env;
 }
 
-list[tuple[Name,Type]] addParam(parameter(Type datatype, str id), list[tuple[Name,Type]] paramTypes) {
-	checkType(dataType, env);
+list[tuple[Name,Type]] addParam(parameter(Type datatype, str id), list[tuple[Name,Type]] paramTypes, TENV env) {
 	nodeID += 1;
+	checkType(datatype, env);
 	return paramTypes += <id, datatype>;
 }

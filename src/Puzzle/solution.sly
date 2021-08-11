@@ -4,8 +4,11 @@ x := true
 x := true
 
 bool function succ() 
-	return true
+	x + x
+	return x == x
 end function
 
 x := true
-
+x := true
+x := true
+x := true

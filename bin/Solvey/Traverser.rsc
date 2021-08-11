@@ -13,6 +13,10 @@ private str labeledTraverse(t_str()) =
     "in-Type-t_str
     out-Type-t_str";
 
+private str labeledTraverse(t_undefined()) = 
+    "in-Type-t_undefined
+    out-Type-t_undefined";
+
 private str labeledTraverse(t_num()) = 
     "in-Type-t_num
     out-Type-t_num";

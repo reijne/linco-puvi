@@ -124,17 +124,13 @@ SolveyVal evalExpr(Expr:notExpr(Expr expr), VENV env) =
 SolveyVal evalExpr(Expr:eqExpr(Expr lhs, Expr rhs), VENV env) {
 	str equalError(str typa) = "Equality Operator requires two arguments of the same type, one is a <typa> the other is not";
 	if (boolval(b1) := evalExpr(lhs, env)) {
-		return boolval(b2) := evalExpr(rhs, env) ? boolval(b1 == b2) : 
-		errorval(Expr@location, equalError("bool"));
+		return boolval(b2) := evalExpr(rhs, env) ? boolval(b1 == b2) : errorval(Expr@location, equalError("bool"));
 	}	else if (numberval(n1) := evalExpr(lhs, env)) {
-		return numberval(n2) := evalExpr(rhs, env) ? boolval(n1 == n2) : 
-		errorval(Expr@location, equalError("number"));
+		return numberval(n2) := evalExpr(rhs, env) ? boolval(n1 == n2) : errorval(Expr@location, equalError("number"));
 	} else if (stringval(s1) := evalExpr(lhs, env)) {
-		return stringval(s2) := evalExpr(rhs, env) ? boolval(s1 == s2) : 
-		errorval(Expr@location, equalError("string"));
+		return stringval(s2) := evalExpr(rhs, env) ? boolval(s1 == s2) : errorval(Expr@location, equalError("string"));
 	} else if (listval(l1) := evalExpr(lhs, env)) {
-		return listval(l2) := evalExpr(rhs, env) ? boolval(l1 == l2) : 
-		errorval(Expr@location, equalError("list"));
+		return listval(l2) := evalExpr(rhs, env) ? boolval(l1 == l2) : 	errorval(Expr@location, equalError("list"));
 	} else {
 		return errorval(Expr@location, "Cannot compare the values with each other, an unknown type has been found");
 	} 
