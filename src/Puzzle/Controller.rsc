@@ -37,6 +37,10 @@ private str gameType = "";
 private list[value] input = [];
 private list[value] expectedOutput = [];
 
+private str labeled = "";
+private TENV tenv = <(),(),[]>;
+private VENV venv = <(), [], (), [], [], []>;
+
 // private list[str] skippedCategories = [];
 // private bool skipNesting = false;
 
@@ -77,8 +81,8 @@ public void updateSceney() {
 }
 
 public void updateErrors() {
-	str typeerrorstring = getErrorString(checkProgram(solution));
-	str evalerrorstring = getErrorString(evalProgram(solution));
+	str typeerrorstring = getErrorString(tenv);
+	str evalerrorstring = getErrorString(venv);
 	if (typeerrorstring == "" || evalerrorstring == "") updateErrors(typeerrorstring + evalerrorstring);
 	else updateErrors(typeerrorstring + "\n" + evalerrorstring);
 }
@@ -100,44 +104,49 @@ public Tree errorAnnotator(Tree t) {
 	return t[@messages = errors];
 }
 
+public set[Message] dataBuilder(Tree t) {
+	Program pro = implode(#Program, t);
+	labeled = labeledTraverse(pro);
+	tenv = checkProgram(pro);
+	venv = evalProgram(pro, input=input);
+	updater();
+	return {};
+}
+
 public void setup(list[value] ins, list[value] eout) {
 	sly_init();
 	input = ins;
-	sly_annotate(errorAnnotator);
+	
 	expectedOutput = eout;
 	genTraverser();
 	startApplication(os, sceney);
+	
 	createSceney();
-	updateSceney();
+	
+	sly_annotate(errorAnnotator);
+	sly_build(dataBuilder);
+	sly_register();
+	
+	print("Click here to start! :: <solution>");
 }
 
 public void updater() {
-	str oldContent = readFile(solution);
-	print("Click here to start! :: <solution>");
-	while (true) {
-		newContent = readFile(solution);
-		if (newContent != oldContent) {
-			updateSceney();
+	
+	updateSceney(labeled);
 			
-			if (gameType == "shooter") updateErrors();
-			else if (gameType == "platformer") updateBranches();
-			checkOutputs();
-			
-			if (contains(newContent, "stopnow")) break;
-			oldContent = newContent;
-		}
-	}
-	safeStopClient();
+	if (gameType == "shooter") updateErrors();
+	else if (gameType == "platformer") updateBranches();
+	checkOutputs();
 }
 
 public void checkOutputs() {
-	list[value] actualOutput = evalProgram(solution).outputs;
-	print("\n\nOutputs :: <actualOutput>");
+	list[value] actualOutput = venv.outputs;
+	if (actualOutput != []) print("\n\nOutputs :: <actualOutput>");
 	
 	if (actualOutput == expectedOutput) {
-		print("Congratulations you have solved the Puzzle!\n");
+		print("The output is correct!!\n");
 	} else {
-		print("The puzzle is not quite solved yet\n");
+		print("The outputs is not quite what was expected\n");
 	}
 }
 
@@ -145,9 +154,11 @@ public void makePuzzle(list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
 	setup(ins, eout);
 	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
-	updater();
-	closeServer();
+}
+
+public void reset() {
 	stopClient();
+	sly_reset();
 }
 
 @doc {
@@ -159,9 +170,6 @@ public void makeShooter(list[value] ins=[], list[value] eout=[]) {
 	setup(ins, eout);
 	updateMessage("The errors in the code spawn enemies.\nFix them before they fix you!\n", 4.0);
 	gameType = "shooter";
-	updater();
-	closeServer();
-	stopClient();
 }
 
 @doc {
@@ -171,9 +179,6 @@ public void makePlatformer(list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
 	setup(ins, eout);
 	gameType = "platformer";
-	updater();
-	closeServer();
-	stopClient();
 }
 
 // Make multiple choice puzzle

@@ -75,7 +75,7 @@ syntax Expr = idExpr: ID id !>> "("
 					  						 | non-assoc lteExpr: Expr lhs "\<=" Expr rhs) 
 					  ;
 
-//lexical Out = @category="IO" "output";
+
 // All possible statements
 syntax Stmt = exprStmt: Expr expr
 					   | decl: Type datatype ID id

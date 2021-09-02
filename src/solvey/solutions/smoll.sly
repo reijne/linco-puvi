@@ -3,5 +3,5 @@ number x
 x := input()
 
 if (false) 
-	2
 end if
+
