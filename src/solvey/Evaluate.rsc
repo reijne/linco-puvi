@@ -208,21 +208,21 @@ SolveyVal evalExpr(Expr:andExpr(Expr lhs, Expr rhs), VENV env) {
 	nodeID += 1;
 	return (boolval(b1) := evalExpr(lhs, env) && boolval(b2) := evalExpr(rhs, env)) ? 
 	boolval(b1 && b2) : 
-	addError(errorval(Expr@location, nodeID, "AND operation requires boolean arguments on both sides"));
+	addError(errorval(Expr@location, nodeID, "AND operation requires bool arguments on both sides"));
 }
 
 SolveyVal evalExpr(Expr:andExpr(Expr lhs, Expr rhs), VENV env) { 
 	nodeID += 1;
 	return (boolval(b1) := evalExpr(lhs, env) && boolval(b2) := evalExpr(rhs, env)) ? 
 	boolval(b1 || b2) : 
-	addError(errorval(Expr@location, nodeID, "OR operation requires boolean arguments on both sides"));
+	addError(errorval(Expr@location, nodeID, "OR operation requires bool arguments on both sides"));
 }
 
 SolveyVal evalExpr(Expr:notExpr(Expr expr), VENV env) { 
 	nodeID += 1;
 	return boolval(b1) := evalExpr(expr, env) ? 
 	boolval(!b1) : 
-	addError(errorval(Expr@location, nodeID, "NOT operation requires a boolean argument"));
+	addError(errorval(Expr@location, nodeID, "NOT operation requires a bool argument"));
 }
 
 SolveyVal evalExpr(Expr:eqExpr(Expr lhs, Expr rhs), VENV env) {

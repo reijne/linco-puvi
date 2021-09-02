@@ -1,7 +1,21 @@
-number x
+// Some high level comment you know
+number divider
+string somename
+bool isCool
 
-if (x) 
+somename := "karel"
+divider := 10000023482738912837
+xavi := counter() + 3
+isCool := true
+
+if ((x == 2) and false) 
 	output(2)
 else 
 	output(1)
 end if
+
+number function counter()
+	x := 2 + 2 - 44
+	b := 2 > x
+	return x + 33 - "some"
+end function

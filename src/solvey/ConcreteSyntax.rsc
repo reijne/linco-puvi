@@ -7,39 +7,38 @@ extend lang::std::Id;
 //  = id: ([a-zA-Z_$] [a-zA-Z0-9_$]* !>> [a-zA-Z0-9_$]) sval \ Keyword;
 
 // Types of the solvey language
-lexical String = ![\"]*;
-//lexical Number = @category="Value" ([0-9]+([.][0-9]+?)?);
-lexical Number = [0-9]+;
-	 					   //|  [0-9]+"."[0-9]+;
-	 					   
-syntax Boolean = b_true: "true"
-							| b_false: "false";
+lexical String = @category="Literatus" ![\"]*;
+
+lexical Number = NumberComb;
+	 		
+lexical NumberComb = [0-9] !>> [0-9] 
+						   			 | [1-9][0-9]+ !>> [0-9] ;
+						   			 			   
+syntax Boolean = @category="Truth" b_true: "true"
+							| @category="FalseHood" b_false: "false";
 
 // Identifier cannot be a defined keyword.
-lexical ID = Id \ Keyword;
+lexical ID =@category="ID" Id \ Keyword;
 
-// Borrowed from Riemer ;)
 layout LAYOUTLIST
   = LAYOUT* !>> [\t-\n \r \ ] !>> "//" !>> "/*";
 
 lexical LAYOUT
-  = Comment
+  = @category="Comment" Comment
   | [\t-\n \r \ ];
   
 lexical Comment
   = "/*" (![*] | [*] !>> [/])* "*/" 
   | "//" ![\n]* $;
 
-//layout Whitespace = whitespace: [\t-\n\r\ ]* spacing ; // << already imported
-
 // Program syntax
 start syntax Program = program: Stmt* statements;
 
-// Block of code
-//syntax Block = block: Stmt* statements;
-
 // All types
-syntax Type = t_str:"string" | t_num:"number" | t_bool:"bool" | t_list:"list";
+syntax Type = @category="TypeKeyword" t_str:"string" 
+					  | @category="TypeKeyword" t_num:"number" 
+					  | @category="TypeKeyword" t_bool:"bool" 
+					  | @category="TypeKeyword" t_list:"list";
 
 // All possible expressions
 syntax Expr = idExpr: ID id !>> "("
@@ -76,6 +75,7 @@ syntax Expr = idExpr: ID id !>> "("
 					  						 | non-assoc lteExpr: Expr lhs "\<=" Expr rhs) 
 					  ;
 
+//lexical Out = @category="IO" "output";
 // All possible statements
 syntax Stmt = exprStmt: Expr expr
 					   | decl: Type datatype ID id
@@ -91,16 +91,17 @@ syntax Stmt = exprStmt: Expr expr
 
 syntax Parameter = parameter: Type datatype ID id;
 
-keyword Keyword = "string" | "number" | "bool" | "list" |
-									"function" | "end" | "return" | 
-									"input" | "output" |
-									"if" | "else" | "repeat" | "while" | 
-									"and" | "or" | "not" |
-									"&&" | "||" | "!" |
-									"true" | "false" |
-									"==" | "\>" | "\>=" | "\<" | "\<=" |
-									"**" | "^" | "*" | "/" | "%" | "+" | "-"
-									;
+keyword Keyword = @category="Keyword" Keywords;
+keyword Keywords 	= "string" | "number" | "bool" | "list"
+								 | "input" | "output"
+								 | 	"and" | "or" | "not"
+								 | "&&" | "||" | "!"
+								 | "true" | "false"
+								 | "==" | "\>" | "\>=" | "\<" | "\<="
+								 | "**" | "^" | "*" | "/" | "%" | "+" | "-"
+		 						 | "function" | "end" | "return" 
+								 | "if" | "else" | "repeat" | "while"; 				
+
 									
 // Keep track of the locations in the code
 anno loc ID@location;

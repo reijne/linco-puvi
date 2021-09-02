@@ -89,16 +89,26 @@ public void updateBranches() {
 	updateBranches(branchstring);
 }
 
+public Tree errorAnnotator(Tree t) {
+	Program pro = implode(#Program, t); 
+	TENV types = checkProgram(pro);
+	VENV values = evalProgram(pro, input=input);
+	errors = {};
+	
+	for (tuple[loc l, int i, str msg] te <-  types.errors) errors += error(te.msg, te.l);
+	for (e <- values.errors) errors += error(getErrorTuple(e)[2], getErrorTuple(e)[0]);
+	return t[@messages = errors];
+}
+
 public void setup(list[value] ins, list[value] eout) {
 	sly_init();
 	input = ins;
+	sly_annotate(errorAnnotator);
 	expectedOutput = eout;
 	genTraverser();
 	startApplication(os, sceney);
 	createSceney();
-	//print("Sceney created\n");
 	updateSceney();
-	//print("Sceney populated\n");
 }
 
 public void updater() {

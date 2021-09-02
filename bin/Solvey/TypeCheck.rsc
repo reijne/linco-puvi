@@ -133,12 +133,16 @@ TENV checkExpr(Expr:inputExpr(), Type req, TENV env) {
 // Function call, check if its defined, and check all the arguments
 TENV checkExpr(Expr:funCall(str id, list[Expr] args), Type req, TENV env) {
 	nodeID += 1; 
-	if (!env.symbols[id]?) env = addError(env, Expr@location, "Undeclared Function <id> called");
-	if (size(env.funParams[id]) != size(args)) 
+	if (!env.symbols[id]?) {
+		env = addError(env, Expr@location, "Undeclared Function <id> called");
+		for (i <- [0 .. size(args)]) checkExpr(args[i], t_undefined(), env);
+	} else if (size(env.funParams[id]) != size(args)) { 
 		env = addError(env, Expr@location, "<out(req)> function <id> expects <size(env.funParams[id])> arguments, but got <size(args)>");
-	for (i <- [0 .. size(env.funParams[id])]) {
-		if (i >= size(args)) break;
-		env = checkExpr(args[i], env.funParams[id][i][1], env);
+	} else {
+		for (i <- [0 .. size(env.funParams[id])]) {
+			if (i >= size(args)) break;
+			env = checkExpr(args[i], env.funParams[id][i][1], env);
+		}
 	}
 	return env;
 }
