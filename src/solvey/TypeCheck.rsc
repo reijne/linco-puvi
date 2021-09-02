@@ -28,19 +28,20 @@ TENV addSymbol(TENV env, Name name, Type t) {
 	return env;
 } 
 
+// Get all the errors in a concatenated string
 str getErrorString(TENV env) {
 	str errorstring = "";
 	for (tuple[loc l, int nid, str msg] e <- env.errors) 
 		errorstring += "<e.nid>|<e.msg>\n";
-	return errorstring[..-1];
+	return errorstring == "" ? errorstring : errorstring[..-1];
 }
 
 // Add an error message to type environment
 TENV addError(TENV env, loc l, str msg) = env[errors = env.errors + <l, nodeID, msg>];
 
 // Constructing an expected type message
-str expected(Type t, str got) = "Expected a <out(t)>, got <got>";                 
-str expected(Type t, Type got) = "Expected a <out(t)>, got <out(got)>";  
+str expected(Type t, str got) = "Expected <out(t)>, got <got>";                 
+str expected(Type t, Type got) = "Expected <out(t)>, got <out(got)>";  
 
 // Return the verbose form of a type
 str out(t_num()) = "number";
@@ -54,7 +55,7 @@ TENV checkProgram(loc l) = checkProgram(sly_build(l));
 
 // Entry point for typechecking on Program type
 TENV checkProgram(Program p) {
-	nodeID = -1;
+	nodeID = 0; // Reset the nodeID so the first stmt is at 0
 	if(program(list[Stmt] statements) := p){
      env = <(),(),[]>;
      for (stmt <- statements) env = checkStmt(stmt, env);
@@ -150,36 +151,36 @@ TENV checkExpr(Expr:bracketExpr(Expr expr), Type req, TENV env) {
 // Arithmetic Expressions
 TENV checkExpr(Expr:powExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_num() ? env1 : env2;
 }			
 							  
 TENV checkExpr(Expr:mulExpr(Expr lhs, Expr rhs), Type req, TENV env)  {
 	nodeID += 1; 
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_num() ?  env1 : env2;
 }							  
 	
 TENV checkExpr(Expr:divExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_num() ? env1 : env2;
 }
 							  
 TENV checkExpr(Expr:modExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_num() ? env1 : env2;
 }							  
 							  
 TENV checkExpr(Expr:minExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_num() ? env1 : env2;
 }
 
@@ -188,72 +189,64 @@ TENV checkExpr(Expr:addExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1; 
 	if (req == t_num()) return checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	else if (req == t_str()) return checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
+	env = addError(env, Expr@location, expected(req, "unexpected type")); 
 	checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
-	return addError(env, Expr@location, expected(req, "unexpected type")); 
+	return env;
 }
 
 TENV checkExpr(Expr:andExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
 	return req == t_bool() ? env1 : env2;
 }
 
 TENV checkExpr(Expr:orExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
 	return req == t_bool() ? env1 : env2;
 }						
 							  
 TENV checkExpr(Expr:notExpr(Expr expr), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(expr, t_bool(), env);
 	env2 = addError(env, Expr@location, expected(req, "unexpected type"));
+	env1 = checkExpr(expr, t_bool(), env);
 	return req == t_bool() ? env1 : env2; 						  
 }
 
 // Comparison expressions 
 TENV checkExpr(Expr:eqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env0 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
-	int localNodeID = nodeID;
-	env1 = checkExpr(lhs, t_str(), checkExpr(rhs, t_str(), env));
-	env2 = checkExpr(lhs, t_bool(), checkExpr(rhs, t_bool(), env));
-	env3 = checkExpr(lhs, t_list(), checkExpr(rhs, t_list(), env));
-	TENV correctEnv = env0;
-	nodeID = localNodeID;
-	for (TENV envN <- [env1, env2, env3]) if (size(envN.errors) < size(correctEnv.errors)) correctEnv = envN;
-	if (correctEnv == env0 && size(env0.errors) == size(env1.errors)) 
-		correctEnv = addError(env, Expr@location,"Equality expects two equal types, but this was not given");
-	return correctEnv;  
+	checkExpr(lhs, t_undefined(), checkExpr(rhs, t_undefined(), env));
+	return env;  
 }
 
 TENV checkExpr(Expr:gtExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)); 
 	env2 = addError(env, Expr@location, "The greater-than operator (\>) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env)); 
 	return req == t_bool() ? env1 : env2; 	
 }
 
 TENV checkExpr(Expr:gteExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, "The greater-than-or-equal operator (\>=) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_bool() ? env1 : env2; 	
 }
 
 TENV checkExpr(Expr:ltExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, "The less-than operator (\<) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");	
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_bool() ? env1 : env2; 	
 }							  
 
 TENV checkExpr(Expr:lteExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
-	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	env2 = addError(env, Expr@location, "The less-than-or-equal operator (\<=) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");
+	env1 = checkExpr(lhs, t_num(), checkExpr(rhs, t_num(), env));
 	return req == t_bool() ? env1 : env2; 	
 }
 
@@ -262,7 +255,7 @@ TENV checkExpr(Expr:lteExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 //
 TENV checkStmt(Stmt:exprStmt(Expr expr), TENV env) {
 	nodeID += 1;
-	return checkExpr(expr, t_num(), env);
+	return checkExpr(expr, t_undefined(), env);
 }
 
 TENV checkStmt(Stmt:decl(Type datatype, str id), TENV env) {

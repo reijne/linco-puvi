@@ -4,10 +4,17 @@ import IO;
 import IDE;
 import String;
 import Exception;
+import Prelude;
+import Type;
+
+import util::IDE;
+//import util::ValueUI;
+
 
 import Solvey::AbstractSyntax;
 import Solvey::ConcreteSyntax;
 import Solvey::TypeCheck;
+import Solvey::Evaluate;
 import Solvey::Traverser;
 import Tools::NodeExtractor;
 import Tools::GenerateTraverser;
@@ -18,13 +25,17 @@ import Network::ClientController;
 public java str startApplication(str os, str appName);
 
 private str os = "windows"; // {"windows", "linux", "macos"}
-private loc showeyDef = |project://Puzzle/src/Puzzle/serialised.show|;
+//private loc showeyDef = |project://Puzzle/src/Puzzle/serialised.show|;
+// Set these variables to change the visualisation and which file the solver will program in.
+private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/serialised_paper.show|;
 private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 private str showeyBuilder = "ShoweyBuilder";
 private str sceney = "Sceney";
 
 private str gameType = "";
+private list[value] input = [];
+private list[value] expectedOutput = [];
 
 // private list[str] skippedCategories = [];
 // private bool skipNesting = false;
@@ -45,6 +56,7 @@ public void createShowey() {
 	createShowey(getNodes());
 }
 
+// TODO make this update the running scene instead
 public void updateShowey() {
 	startApplication(os, showeyBuilder);
 	updateShowey(readFile(showeyDef));
@@ -65,31 +77,41 @@ public void updateSceney() {
 }
 
 public void updateErrors() {
-	str errorstring = getErrorString(checkProgram(solution));
-	updateErrors(errorstring);
+	str typeerrorstring = getErrorString(checkProgram(solution));
+	str evalerrorstring = getErrorString(evalProgram(solution));
+	if (typeerrorstring == "" || evalerrorstring == "") updateErrors(typeerrorstring + evalerrorstring);
+	else updateErrors(typeerrorstring + "\n" + evalerrorstring);
 }
 
-public void setup() {
-	sly_register();
+public void updateBranches() {
+	str branchstring = getBranchString(evalProgram(solution));
+	//print("BranchString::<branchstring>\n");
+	updateBranches(branchstring);
+}
+
+public void setup(list[value] ins, list[value] eout) {
+	sly_init();
+	input = ins;
+	expectedOutput = eout;
 	genTraverser();
-	//startApplication(os, sceney);
+	startApplication(os, sceney);
 	createSceney();
-	print("Sceney created\n");
+	//print("Sceney created\n");
 	updateSceney();
-	print("Sceney populated\n");
+	//print("Sceney populated\n");
 }
 
 public void updater() {
 	str oldContent = readFile(solution);
+	print("Click here to start! :: <solution>");
 	while (true) {
 		newContent = readFile(solution);
 		if (newContent != oldContent) {
 			updateSceney();
 			
 			if (gameType == "shooter") updateErrors();
-			else if (gameType == "platformer") print("lol this is not supported yet");
-			
-			print("TypeChecking\n <checkProgram(solution)>");
+			else if (gameType == "platformer") updateBranches();
+			checkOutputs();
 			
 			if (contains(newContent, "stopnow")) break;
 			oldContent = newContent;
@@ -98,17 +120,50 @@ public void updater() {
 	safeStopClient();
 }
 
-public void makePuzzle() {
-	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
-	setup();
-	updater();
+public void checkOutputs() {
+	list[value] actualOutput = evalProgram(solution).outputs;
+	print("\n\nOutputs :: <actualOutput>");
+	
+	if (actualOutput == expectedOutput) {
+		print("Congratulations you have solved the Puzzle!\n");
+	} else {
+		print("The puzzle is not quite solved yet\n");
+	}
 }
 
-public void makeShooter() {
+public void makePuzzle(list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
-	setup();
+	setup(ins, eout);
+	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
+	updater();
+	closeServer();
+	stopClient();
+}
+
+@doc {
+	Set up the app as a shooter type game, where errors show up as enemies.
+}
+public void makeShooter(list[value] ins=[], list[value] eout=[]) {
+	expectedOut = eout;
+	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	setup(ins, eout);
+	updateMessage("The errors in the code spawn enemies.\nFix them before they fix you!\n", 4.0);
 	gameType = "shooter";
 	updater();
+	closeServer();
+	stopClient();
+}
+
+@doc {
+	Set up the game scene as a platformer with falling branches and collectables.
+}
+public void makePlatformer(list[value] ins=[], list[value] eout=[]) {
+	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	setup(ins, eout);
+	gameType = "platformer";
+	updater();
+	closeServer();
+	stopClient();
 }
 
 // Make multiple choice puzzle

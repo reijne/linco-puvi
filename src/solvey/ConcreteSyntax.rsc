@@ -1,8 +1,6 @@
 module Solvey::ConcreteSyntax
 
 import ParseTree;
-
-//extend lang::std::Layout;
 extend lang::std::Id;
 
 //lexical Id

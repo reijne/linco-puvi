@@ -1,14 +1,7 @@
-// Type some code here and pray to the gods it shows in the scene :)
 number x
-x := true
-x := true
 
-bool function succ() 
-	x + x
-	return x == x
-end function
-
-x := true
-x := true
-x := true
-x := true
+if (x) 
+	output(2)
+else 
+	output(1)
+end if

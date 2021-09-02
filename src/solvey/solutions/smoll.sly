@@ -1,19 +1,7 @@
 number x
-number y
-x := 4
 
-if (x < 3) 
-	output("bigger")
-else 
-	output("something")
+x := input()
+
+if (false) 
+	2
 end if
-
-number function getSome(number x)
-	return x^2
-end function
-
-y := getSome(2)
-
-output(y)
-output(y+2)
-y := y + "something"

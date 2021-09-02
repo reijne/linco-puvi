@@ -14,10 +14,13 @@ public java str sendMessage(str msg);
 public java void stopClient();
 
 private bool isConnected = false;
+private str localhost = "127.0.0.1";
+private int showeyPort = 529;
+private int sceneyPort = 530;
 
 // Test the Socket Client on the test port (ServerController) by sending Ping
 void testClient() {
-	startClient("127.0.0.1", testport);
+	startClient(localhost, testport);
 	print(sendMessage("ping"));
 	stopClient();
 }
@@ -42,7 +45,7 @@ void closeServer() {
 }
 void safeStartClient() {
 	if (isConnected) throw IO("Socket connection already exists, close all running apps.");
-	startClient("127.0.0.1", 530);
+	startClient(localhost, sceneyPort);
 	isConnected = true;
 }
 
@@ -62,7 +65,7 @@ str remoteCall(str method, str param, bool close) {
 void createShowey(str flattenedTree) {
   	try {
 		//safeStartClient();
-		startClient("127.0.0.1", 530);
+		startClient(localhost, showeyPort);
 		sendMessage(remoteCall("createShowey", flattenedTree, true));
 	} catch: {
 		createShowey(flattenedTree);
@@ -77,7 +80,7 @@ void createShowey(str flattenedTree) {
 void updateShowey(str serialisedShowDef) {
 	try {
 		//safeStartClient();
-		startClient("127.0.0.1", 530);
+		startClient(localhost, showeyPort);
 		sendMessage(remoteCall("updateShowey", serialisedShowDef, true));
 	} catch: {
 		createShowey(serialisedShowDef);
@@ -92,9 +95,8 @@ void updateShowey(str serialisedShowDef) {
 void createSceney(str serialisedShowDef) {
 	try {
 		//safeStartClient();
-		startClient("127.0.0.1", 530);
+		startClient(localhost, sceneyPort);
 		sendMessage(remoteCall("createSceney", serialisedShowDef, false));
-		print("sent RPC:: createSceney\n");
 	} catch: {
 		createSceney(serialisedShowDef);
 		return;
@@ -107,11 +109,54 @@ void createSceney(str serialisedShowDef) {
 void updateSceney(str labeledTraversal) {
 	//if (!isConnected) throw IO("Socket Connection not instantiated but attempting to send the scene");
 	sendMessage(remoteCall("updateSceney", labeledTraversal, false));
-	print("sent RPC:: updateSceney\n");
 }
 
+@doc {
+	Update all the blocks where an error occurs by spawning an enemy.
+}
 void updateErrors(str errorline) {
 	sendMessage(remoteCall("updateErrors", errorline, false));
-	print("sent RPC:: updateErrors\n");
 }
 
+@doc {
+	Update non evaluated branches and spawn collectables at the end.
+}
+void updateBranches(str branches) {
+	sendMessage(remoteCall("updateBranches", branches, false));
+}
+
+@doc {
+	Update the message in game for a specified duration.
+}
+void updateMessage(str msg, real duration) {
+	str messagePlusDuration = msg + "+<duration>";
+	sendMessage(remoteCall("updateMessage", messagePlusDuration, false));
+}
+
+@doc {
+	Update the specified block to include an enemy.
+}
+void updateEnemy(int nodeID) {
+	sendMessage(remoteCall("updateEnemy", "<nodeID>", false));
+}
+
+@doc {
+	Update the specified block to fall upon interaction.
+}
+void updateFalling(int nodeID) {
+	sendMessage(remoteCall("updateFalling", "<nodeID>", false));
+}
+
+@doc {
+	Update the specified blocky by adding a collectable.
+}
+void updateCollectable(int nodeID) {
+	sendMessage(remoteCall("updateCollectable", "<nodeID>", false));
+}
+
+@doc {
+	Update the interaction type :: shoot, throw, none.
+}
+void updateInteraction(str interactionType) {
+	sendMessage(remoteCall("updateInteraction", interactionType, false));
+}
