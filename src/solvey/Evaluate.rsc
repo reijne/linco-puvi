@@ -329,8 +329,8 @@ VENV evalStmt(Stmt:ifStmt(Expr cond, list[Stmt] block), VENV env) {
 	} else {
 		nodeIDbefore = nodeID;
 		for(st <- block) evalStmt(st, env);
-		for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i-1;
-		tailEnds += nodeID-2;
+		for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i;
+		tailEnds += nodeID-1;
 		nodeID = nodeIDbefore;
 	}
 	return env;

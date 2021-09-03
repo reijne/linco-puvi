@@ -114,6 +114,7 @@ public set[Message] dataBuilder(Tree t) {
 }
 
 public void setup(list[value] ins, list[value] eout) {
+	reset();
 	sly_init();
 	input = ins;
 	
@@ -137,17 +138,27 @@ public void updater() {
 	if (gameType == "shooter") updateErrors();
 	else if (gameType == "platformer") updateBranches();
 	checkOutputs();
+	checkState();
 }
 
 public void checkOutputs() {
 	list[value] actualOutput = venv.outputs;
 	if (actualOutput != []) print("\n\nOutputs :: <actualOutput>");
 	
-	if (actualOutput == expectedOutput) {
-		print("The output is correct!!\n");
-	} else {
-		print("The outputs is not quite what was expected\n");
+	if (actualOutput == expectedOutput) print("The output is correct!\n");
+	else 	print("The output is not quite what was expected\n");
+}
+
+@doc {
+	Check any desired state of the solution.
+}
+public void checkState() {
+	if (tenv.errors != [] || venv.errors != []) {
+		println("Remaining Errors");
+		for (e <- tenv.errors) println(e);
+		for (e <- venv.errors) println(e);
 	}
+	//tenv.symbols.contains(x, type=number)
 }
 
 public void makePuzzle(list[value] ins=[], list[value] eout=[]) {

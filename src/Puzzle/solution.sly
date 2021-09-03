@@ -1,18 +1,1 @@
 // Type some code here and pray to the gods it shows in the scene :)
-if (true)
-	output(2)
-end if
-
-if (true)
-	output(2)
-end if
-
-if (true)
-	output(2)
-end if
-
-bool function isWin() 
-	return true
-end function
-
-output(isWin())

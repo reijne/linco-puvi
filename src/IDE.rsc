@@ -59,6 +59,7 @@ public void sly_init() {
 }
 
 public void sly_reset() {
+	clearNonRascalContribution(SLY_NAME);
 	conset = {};
 	sly_init();
 }

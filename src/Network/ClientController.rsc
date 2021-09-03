@@ -148,6 +148,13 @@ void updateFalling(int nodeID) {
 }
 
 @doc {
+	Update the movement type the scene employs. {run, fly}
+}
+void updateMovement(str movement) {
+	sendMessage(remoteCall("updateMovement", "<movement>", false));
+}
+
+@doc {
 	Update the specified blocky by adding a collectable.
 }
 void updateCollectable(int nodeID) {
