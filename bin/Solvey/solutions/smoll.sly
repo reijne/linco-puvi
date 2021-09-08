@@ -1,7 +1,6 @@
 number x
 
-x := input()
 
-if (false) 
+if (false != true) 
 end if
 

@@ -114,12 +114,12 @@ public set[Message] dataBuilder(Tree t) {
 }
 
 public void setup(list[value] ins, list[value] eout) {
+	genTraverser();
 	reset();
 	sly_init();
 	input = ins;
 	
 	expectedOutput = eout;
-	genTraverser();
 	startApplication(os, sceney);
 	
 	createSceney();
@@ -168,7 +168,7 @@ public void makePuzzle(list[value] ins=[], list[value] eout=[]) {
 }
 
 public void reset() {
-	stopClient();
+	try {stopClient(); } catch:;
 	sly_reset();
 }
 

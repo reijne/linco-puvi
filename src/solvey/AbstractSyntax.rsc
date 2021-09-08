@@ -37,6 +37,7 @@ data Expr = idExpr(str id)
 				  | notExpr(Expr expr) 
 				  
 				  | eqExpr(Expr lhs, Expr rhs) 
+				  | neqExpr(Expr lhs, Expr rhs) 
 				  | gtExpr(Expr lhs, Expr rhs) 
 				  | gteExpr(Expr lhs, Expr rhs) 
 				  | ltExpr(Expr lhs, Expr rhs) 

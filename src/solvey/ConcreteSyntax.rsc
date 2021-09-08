@@ -69,6 +69,8 @@ syntax Expr = idExpr: ID id !>> "("
 					  			  | right notExpr: "!" Expr expr) 
 					  			  
 					  > non-assoc ( non-assoc eqExpr: Expr lhs "==" Expr rhs
+					  						 | non-assoc neqExpr: Expr lhs "=/=" Expr rhs
+					  						 | non-assoc neqExpr: Expr lhs "!=" Expr rhs
 					  						 | non-assoc gtExpr: Expr lhs "\>" Expr rhs
 					  						 | non-assoc gteExpr: Expr lhs "\>=" Expr rhs
 					  						 | non-assoc ltExpr: Expr lhs "\<" Expr rhs

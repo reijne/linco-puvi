@@ -133,7 +133,6 @@ SolveyVal evalExpr(Expr:listExpr(list[Expr]  items), VENV env) {
 	return listval(l);
 }
 
-// TODO add input using the list of expr
 SolveyVal evalExpr(Expr:inputExpr(), VENV env) {
 	nodeID += 1; 
 	if (inid >= size(inputs)) return addError(errorval(Expr@location, nodeID, "Input count mismatch, requested <inid+1> input(s), but supplied <size(inputs)> actual inputs")); 
@@ -225,22 +224,30 @@ SolveyVal evalExpr(Expr:notExpr(Expr expr), VENV env) {
 	addError(errorval(Expr@location, nodeID, "NOT operation requires a bool argument"));
 }
 
+str equalError(str typa) = "Equality Operator requires two arguments of the same type, one is a <typa> the other is not";
 SolveyVal evalExpr(Expr:eqExpr(Expr lhs, Expr rhs), VENV env) {
 	nodeID += 1;
-	err = errorval(Expr@location, nodeID, "Cannot compare the values with each other, an unknown type has been found");
-	str equalError(str typa) = "Equality Operator requires two arguments of the same type, one is a <typa> the other is not";
+	return compare(Expr, lhs, rhs, env);
+}
+
+SolveyVal compare(Expr host, Expr lhs, Expr rhs, VENV env,  bool not=false) {
+	err = errorval(host@location, nodeID, "Cannot compare the values with each other, an unknown type has been found");
 	if (boolval(b1) := evalExpr(lhs, env)) {
-		return boolval(b2) := evalExpr(rhs, env) ? boolval(b1 == b2) : addError(errorval(Expr@location, nodeID, equalError("bool")));
+		return boolval(b2) := evalExpr(rhs, env) ? not ? boolval(b1 != b2) : boolval(b1 == b2) : addError(errorval(host@location, nodeID, equalError("bool")));
 	}	else if (numberval(n1) := evalExpr(lhs, env)) {
-		return numberval(n2) := evalExpr(rhs, env) ? boolval(n1 == n2) : addError(errorval(Expr@location, nodeID, equalError("number")));
+		return numberval(n2) := evalExpr(rhs, env) ? not ? boolval(n1 != n2) : boolval(n1 == n2) : addError(errorval(host@location, nodeID, equalError("number")));
 	} else if (stringval(s1) := evalExpr(lhs, env)) {
-		return stringval(s2) := evalExpr(rhs, env) ? boolval(s1 == s2) : addError(errorval(Expr@location, nodeID, equalError("string")));
+		return stringval(s2) := evalExpr(rhs, env) ? not ? boolval(s1 != s2) : boolval(s1 == s2) : addError(errorval(host@location, nodeID, equalError("string")));
 	} else if (listval(l1) := evalExpr(lhs, env)) {
-		return listval(l2) := evalExpr(rhs, env) ? boolval(l1 == l2) : 	addError(errorval(Expr@location, nodeID, equalError("list")));
+		return listval(l2) := evalExpr(rhs, env) ? not ? boolval(l1 != l2) : boolval(l1 == l2) : 	addError(errorval(host@location, nodeID, equalError("list")));
 	} else {
 		evalExpr(rhs, env);
 		return addError(err);
 	} 
+}
+
+SolveyVal evalExpr(Expr:neqExpr(Expr lhs, Expr rhs), VENV env) {
+	return compare(Expr, lhs, rhs, env, not=true);
 }
 
 SolveyVal evalExpr(Expr:gtExpr(Expr lhs, Expr rhs), VENV env) { 

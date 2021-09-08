@@ -1,1 +1,7 @@
 // Type some code here and pray to the gods it shows in the scene :)
+if (false)
+	output("suck")
+end if
+
+if (true)
+end if

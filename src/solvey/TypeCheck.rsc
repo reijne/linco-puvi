@@ -226,6 +226,12 @@ TENV checkExpr(Expr:eqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	return env;  
 }
 
+TENV checkExpr(Expr:neqExpr(Expr lhs, Expr rhs), Type req, TENV env) {
+	nodeID += 1;
+	checkExpr(lhs, t_undefined(), checkExpr(rhs, t_undefined(), env));
+	return env;  
+}
+
 TENV checkExpr(Expr:gtExpr(Expr lhs, Expr rhs), Type req, TENV env) {
 	nodeID += 1;
 	env2 = addError(env, Expr@location, "The greater-than operator (\>) expects two numeric values to compare and results in a boolean, but another resulting type was expected: <req>.");

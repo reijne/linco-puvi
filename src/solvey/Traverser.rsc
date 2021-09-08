@@ -72,6 +72,16 @@ public str labeledTraverse(andExpr(Expr lhs,Expr rhs))  =
 -out-Expr-rhs
 out-Expr-andExpr";
 
+public str labeledTraverse(neqExpr(Expr lhs,Expr rhs))  =
+"in-Expr-neqExpr
+-in-Expr-lhs
+<labeledTraverse(lhs)>
+-out-Expr-lhs
+-in-Expr-rhs
+<labeledTraverse(rhs)>
+-out-Expr-rhs
+out-Expr-neqExpr";
+
 public str labeledTraverse(boolExpr(Boolean boolean))  =
 "in-Expr-boolExpr
 -in-Boolean-boolean
