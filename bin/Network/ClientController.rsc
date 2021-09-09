@@ -62,13 +62,13 @@ str remoteCall(str method, str param, bool close) {
 @doc {
 	Send a flattened tree representation of a chosen language to create a showey definition.
 }
-void createShowey(str flattenedTree) {
+void createShowey(str extractedNodes) {
   	try {
 		//safeStartClient();
 		startClient(localhost, showeyPort);
-		sendMessage(remoteCall("createShowey", flattenedTree, true));
+		sendMessage(remoteCall("createShowey", extractedNodes, true));
 	} catch: {
-		createShowey(flattenedTree);
+		createShowey(extractedNodes);
 		return;
 	}
 	safeStopClient();

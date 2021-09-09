@@ -72,14 +72,6 @@ public void createSceney() {
 	createSceney(serialised);
 }
 
-public void updateSceney() {
-	try {
-		//print("\n\nCode ::\n<sly_parse(solution)>\nEnd Code\n\n");
-		Program p = sly_build(solution);
-		updateSceney(labeledTraverse(p));
-	} catch e: print("parse error <e>");	
-}
-
 public void updateErrors() {
 	str typeerrorstring = getErrorString(tenv);
 	str evalerrorstring = getErrorString(venv);
