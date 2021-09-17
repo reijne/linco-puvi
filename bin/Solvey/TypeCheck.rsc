@@ -40,8 +40,8 @@ str getErrorString(TENV env) {
 TENV addError(TENV env, loc l, str msg) = env[errors = env.errors + <l, nodeID, msg>];
 
 // Constructing an expected type message
-str expected(Type t, str got) = "Expected <out(t)>, got <got>";                 
-str expected(Type t, Type got) = "Expected <out(t)>, got <out(got)>";  
+str expected(Type t, str got) = "Expected <out(t)>, got <got>, meaning the computer expected a certain type but another was given.";                 
+str expected(Type t, Type got) = "Expected <out(t)>, got <out(got)>, meaning the computer expected a certain type but another was given.";  
 
 // Return the verbose form of a type
 str out(t_num()) = "number";
@@ -89,13 +89,13 @@ TENV checkExpr(Expr:idExpr(Name id), Type req, TENV env) {
 	if (inFunc) {
 		tuple[bool, Type] paramType = getParam(id, env);
 		if (!paramType[0]) 
-			if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>"); 
+			if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>, cannot use a variable that is not declared for the computer"); 
 			else return req == env.symbols[id] ? env : addError(env, Expr@location, expected(req, env.symbols[id]));
 		else {
 			return req == paramType[1] ? env : addError(env, Expr@location, expected(req, paramType[1]));
 		}
 	} else {
-		if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>");
+		if (!env.symbols[id]?) return addError(env, Expr@location, "Undeclared Variable <id>, cannot use a variable that is not declared for the computer");
 		return req == env.symbols[id] ? env : addError(env, Expr@location, expected(req, env.symbols[id]));
 	}
 }
@@ -134,7 +134,7 @@ TENV checkExpr(Expr:inputExpr(), Type req, TENV env) {
 TENV checkExpr(Expr:funCall(str id, list[Expr] args), Type req, TENV env) {
 	nodeID += 1; 
 	if (!env.symbols[id]?) {
-		env = addError(env, Expr@location, "Undeclared Function <id> called");
+		env = addError(env, Expr@location, "Undeclared Function <id> called, a function has to be declared for the computer in order to call and execute it.");
 		for (i <- [0 .. size(args)]) checkExpr(args[i], t_undefined(), env);
 	} else if (size(env.funParams[id]) != size(args)) { 
 		env = addError(env, Expr@location, "<out(req)> function <id> expects <size(env.funParams[id])> arguments, but got <size(args)>");

@@ -129,16 +129,20 @@ public void updater() {
 			
 	if (gameType == "shooter") updateErrors();
 	else if (gameType == "platformer") updateBranches();
+	
+	print("\n\n\n====================Puzzle Info");
 	checkOutputs();
 	checkState();
+	printVariables();
+	print("====================END Puzzle Info");
 }
 
 public void checkOutputs() {
 	list[value] actualOutput = venv.outputs;
-	if (actualOutput != []) print("\n\nOutputs :: <actualOutput>");
+	if (actualOutput != []) print("\n==========Outputs\n<actualOutput>");
 	
-	if (actualOutput == expectedOutput) print("The output is correct!\n");
-	else 	print("The output is not quite what was expected\n");
+	if (actualOutput == expectedOutput) println("\nThe output is correct!");
+	else 	println("\nThe output is not quite what was expected");
 }
 
 @doc {
@@ -146,11 +150,22 @@ public void checkOutputs() {
 }
 public void checkState() {
 	if (tenv.errors != [] || venv.errors != []) {
-		println("Remaining Errors");
+		println("\n==========Errors");
 		for (e <- tenv.errors) println(e);
 		for (e <- venv.errors) println(e);
 	}
 	//tenv.symbols.contains(x, type=number)
+}
+
+public void printVariables() {
+	map[Name, SolveyVal] values = venv.values;
+	str vars = "";
+	for (name <- values) {
+		vars += "<name>, <values[name]>\n";
+	}
+	if (vars != "") {
+		println("\n==========Variables\n<vars[..-1]>");
+	}
 }
 
 public void makePuzzle(list[value] ins=[], list[value] eout=[]) {

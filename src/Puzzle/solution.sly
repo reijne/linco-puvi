@@ -1,7 +1,17 @@
 // Type some code here and pray to the gods it shows in the scene :)
-if (false)
-	output("suck")
+if (true)
+	output("true")
 end if
 
-if (true)
+number x
+
+x:=4
+
+bool b
+b := false
+	
+x := false
+
+if (x == b)
+	output("wo")
 end if
