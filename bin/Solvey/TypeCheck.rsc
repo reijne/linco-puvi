@@ -124,7 +124,6 @@ TENV checkExpr(Expr:listExpr(list[Expr] items), Type req, TENV env) {
 	return env;
 }
 
-// TODO add this from the list of inputs
 TENV checkExpr(Expr:inputExpr(), Type req, TENV env) {
 	nodeID += 1; 
 	return env;
@@ -299,7 +298,6 @@ TENV checkStmt(Stmt:assStmt(str id, Expr expr), TENV env) {
 	return checkExpr(expr, env.symbols[id], env);
 }
 
-// TODO figure out how to fucking make any type required lol
 TENV checkStmt(Stmt:outputStmt(Expr expr), TENV env) {
 	nodeID += 1;
 	return env;

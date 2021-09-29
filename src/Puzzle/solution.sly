@@ -1,17 +1,9 @@
 // Type some code here and pray to the gods it shows in the scene :)
-if (true)
-	output("true")
-end if
-
 number x
+x <- 4
 
-x:=4
-
-bool b
-b := false
-	
-x := false
-
-if (x == b)
-	output("wo")
+if (true)
 end if
+
+repeat(4)
+end repeat

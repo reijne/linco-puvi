@@ -83,7 +83,8 @@ syntax Stmt = exprStmt: Expr expr
 					   | decl: Type datatype ID id
 					   | listDecl: "list" "[" Type datatype "]" ID id
 					   | returnStmt: "return" Expr expr
-					   | assStmt: ID id ":=" Expr expr
+					   | assStmt: ID id "\<-" Expr expr
+					   | assStmt: ID id "=" Expr expr
 					   | outputStmt: "output" "(" Expr expr ")"
 					   | ifStmt: "if" "(" Expr cond ")"  Stmt* block "end" "if"
 					   | ifElseStmt: "if" "(" Expr cond ")"  Stmt* thenBlock "else" Stmt* elseBlock "end" "if"

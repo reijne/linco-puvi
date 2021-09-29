@@ -27,7 +27,7 @@ public java str startApplication(str os, str appName);
 private str os = "windows"; // {"windows", "linux", "macos"}
 //private loc showeyDef = |project://Puzzle/src/Puzzle/serialised.show|;
 // Set these variables to change the visualisation and which file the solver will program in.
-private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/serialised_paper.show|;
+private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/PLANES.show|;
 private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 private str showeyBuilder = "ShoweyBuilder";
@@ -135,6 +135,9 @@ public void updater() {
 	checkState();
 	printVariables();
 	print("====================END Puzzle Info");
+	
+	updateCollectable(5);
+	updateEnemy(10);
 }
 
 public void checkOutputs() {
@@ -161,7 +164,7 @@ public void printVariables() {
 	map[Name, SolveyVal] values = venv.values;
 	str vars = "";
 	for (name <- values) {
-		vars += "<name>, <values[name]>\n";
+		vars += "<name> = <unwrap(values[name])>\n";
 	}
 	if (vars != "") {
 		println("\n==========Variables\n<vars[..-1]>");
@@ -196,6 +199,7 @@ public void makeShooter(list[value] ins=[], list[value] eout=[]) {
 public void makePlatformer(list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
 	setup(ins, eout);
+	updateMessage("Collect all the shiny gold orbs spawned at every branch, but beware of non-executed branches!!!\n", 4.0);
 	gameType = "platformer";
 }
 

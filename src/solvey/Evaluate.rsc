@@ -333,6 +333,7 @@ VENV evalStmt(Stmt:ifStmt(Expr cond, list[Stmt] block), VENV env) {
 	nodeID += 1;
 	if (boolval(true) := evalExpr(cond, env)) {
 		for(st <- block) env = evalStmt(st, env);
+		tailEnds += nodeID-1;
 	} else {
 		nodeIDbefore = nodeID;
 		for(st <- block) evalStmt(st, env);
@@ -348,9 +349,11 @@ VENV evalStmt(Stmt:ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBl
 	list[Stmt] oppositeBlock = elseBlock;
 	
 	if (boolval(true) := evalExpr(cond, env)) {
-		for(st <- thenBlock) env = evalStmt(st, env); 
+		for(st <- thenBlock) env = evalStmt(st, env);
+		tailEnds += nodeID-1; 
 	} else {
 		for(st <- elseBlock) env = evalStmt(st, env);
+		tailEnds += nodeID-1;
 		oppositeBlock = thenBlock;
 	}
 	
