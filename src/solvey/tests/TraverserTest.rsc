@@ -12,7 +12,7 @@ import Solvey::tests::Setup;
 import Solvey::tests::AbstractTest;
 
 // Property 1 :: Always starts with an in-x-x  and ends with an out-x-x
-// Property 2 :: A child cannot occur before a node has been found ... implied in 1
+// Property 2 :: A child cannot occur outside a node 
 // Property 3 :: All traversal items have to be closed, in other words; every in operation has to be met with an out
 
 @doc {

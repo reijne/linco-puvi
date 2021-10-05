@@ -1,0 +1,39 @@
+// Multiple choice puzzle. 
+// You have received two numbers as input (low, high)
+// The goal is to determine if the numbers are fibonacci numbers.\n
+// Fibonacci number :: each number is the sum of two preceding ones.
+// F(n) = F(n-1) + F(n-2) for n > 1
+// F(0) = 0 and F(1) = 1
+//
+// You have been given two numbers, high and low.
+// The next number would be calculated like this:
+// next <- low + high
+//
+// Your goal is to determine if the numbers are fibonnaci numbers
+// Do this by reordering the code inside the =section= in the while-loop
+
+
+number low
+number high
+
+low <- input()
+high <- input()
+
+number newlow
+newlow <- low
+
+while(newlow > 0)
+	// Reorder the code lines
+	// start=section=
+	newlow <- high - low
+	low <- newlow	
+	high <- low
+	// end=section=
+	output(newlow)
+end while
+
+repeat(low)
+	low = low + 1
+	output(low)
+end repeat
+

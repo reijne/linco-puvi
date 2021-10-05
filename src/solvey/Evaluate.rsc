@@ -22,14 +22,14 @@ alias VENV = tuple[map[Name, SolveyVal] values,
 								list[value] outputs, 
 								map[Name, Func] functions, 
 								list[SolveyVal] errors,
-								list[int] nonBranches,
-								list[int] branchTails]; 	
+								list[loc] nonBranches,
+								list[loc] branchTails]; 	
 
 str currentFunction = "";
 int nodeID = 0;
 list[SolveyVal] errors = [];
-list[int] nonTraversed = [];
-list[int] tailEnds = [];
+list[loc] nonTraversed = [];
+list[loc] tailEnds = [];
 
 bool toBool(b_true()) {nodeID +=1; return true;}
 bool toBool(b_false()) {nodeID +=1; return false;}
@@ -55,10 +55,12 @@ SolveyVal addError(errorval(loc lo, int nid, str msg)) {
 }
 
 // Get all the errors in a concatenated string
-str getErrorString(VENV env) {
+str getErrorString(VENV env, map[loc, int] nodeLocs=()) {
 	str errorstring = "";
-	for (e <- env.errors) 
-		errorstring += "<e.nid>|<e.msg>\n";
+	for (e <- env.errors) {
+		if (nodeLocs == ()) errorstring += "<e.nid>|<e.msg>\n";
+		else errorstring += "<nodeLocs[e.lo]>|<e.msg>\n";
+	}
 	return errorstring == "" ? errorstring : errorstring[..-1];
 }
 
@@ -67,12 +69,12 @@ tuple[loc, int, str] getErrorTuple(errorval(loc lo, int nid, str msg)) {
 }
 
 // Get all the branch locations and their tails
-str getBranchString(VENV env) {
+str getBranchString(VENV env, map[loc, int] nodeLocs) {
 	str branchstring = "";
-	for (b <- env.nonBranches) branchstring += "<b>,";
+	for (b <- env.nonBranches) branchstring += "<nodeLocs[b]>,";
 	if (branchstring != "") branchstring = branchstring[..-1];
 	branchstring += "|";
-	for (t <- env.branchTails) branchstring += "<t>,";
+	for (t <- env.branchTails) branchstring += "<nodeLocs[t]>,";
 	if (branchstring[-1] == ",") branchstring = branchstring[..-1];
 	return branchstring;
 }
@@ -109,6 +111,7 @@ SolveyVal evalExpr(Expr:idExpr(str id), VENV env) {
 	nodeID += 1; 
 	if (env.values[id]?) return env.values[id];
 	return addError(errorval(Expr@location, nodeID, "Uninitialised variable <id>"));
+	
 }
 	
 SolveyVal evalExpr(Expr:strExpr(str string), VENV env) {
@@ -197,9 +200,12 @@ SolveyVal evalExpr(Expr:minExpr(Expr lhs, Expr rhs), VENV env) {
 // TODO add string + list operations
 SolveyVal evalExpr(Expr:addExpr(Expr lhs, Expr rhs), VENV env) { 
 	nodeID += 1;
-	return (numberval(n1) := evalExpr(lhs, env) && numberval(n2) := evalExpr(rhs, env)) ? 
-	numberval(n1 + n2) : 
-	addError(errorval(Expr@location, nodeID, "Addition requires number arguments on both sides"));
+	if (numberval(n1) := evalExpr(lhs, env)) return numberval(n2) := evalExpr(rhs, env) ? 
+	numberval(n1 + n2) : addError(errorval(Expr@location, nodeID, "Addition requires number arguments on both sides"));
+	
+	if (stringval(s1) := evalExpr(lhs, env)) return stringval(s2) := evalExpr(rhs, env) ? 
+	stringval(s1 + s2) : addError(errorval(Expr@location, nodeID, "Addition requires string arguments on both sides"));
+	return addError(errorval(Expr@location, nodeID, "Addition only works with string or number values on both sides."));
 }
 
 // Logical Expressions
@@ -333,14 +339,16 @@ VENV evalStmt(Stmt:ifStmt(Expr cond, list[Stmt] block), VENV env) {
 	nodeID += 1;
 	if (boolval(true) := evalExpr(cond, env)) {
 		for(st <- block) env = evalStmt(st, env);
-		tailEnds += nodeID-1;
 	} else {
 		nodeIDbefore = nodeID;
-		for(st <- block) evalStmt(st, env);
-		for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i;
-		tailEnds += nodeID-1;
+		for(st <- block) {
+			evalStmt(st, env);
+			nonTraversed += st@location;
+		}
+		//for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i;
 		nodeID = nodeIDbefore;
 	}
+	if (size(block) > 0) tailEnds += block[size(block)-1]@location;
 	return env;
 }
 
@@ -350,26 +358,35 @@ VENV evalStmt(Stmt:ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBl
 	
 	if (boolval(true) := evalExpr(cond, env)) {
 		for(st <- thenBlock) env = evalStmt(st, env);
-		tailEnds += nodeID-1; 
+		if (size(thenBlock) > 0) tailEnds += thenBlock[size(thenBlock)-1]@location;
+		//tailEnds += nodeID-1; 
 	} else {
 		for(st <- elseBlock) env = evalStmt(st, env);
-		tailEnds += nodeID-1;
+		if (size(elseBlock) > 0) tailEnds += elseBlock[size(elseBlock)-1]@location;
+		//tailEnds += nodeID-1;
 		oppositeBlock = thenBlock;
 	}
 	
 	nodeIDbefore = nodeID;
-	for(st <- oppositeBlock) evalStmt(st, env);
-	for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i;
-	tailEnds += nodeID-1;
+	for(st <- oppositeBlock) {
+		evalStmt(st, env);
+		nonTraversed += st@location;
+	}
+	//for (i <- [nodeIDbefore .. nodeID]) nonTraversed += i;
+	//tailEnds += nodeID-1;
 	nodeID = nodeIDbefore;
 	
 	return env;
 }
 
-VENV evalStmt(Stmt:repeatStmt(int iter, list[Stmt]block), VENV env) {
+VENV evalStmt(Stmt:repeatStmt(Expr iter, list[Stmt]block), VENV env) {
 	nodeID += 1;
-	for (_ <- [0 .. iter]) 
-		for (st <- block) env = evalStmt(st, env);
+	if (numberval(n) := evalExpr(iter, env)) {
+		for (_ <- [0 .. n]) 
+			for (st <- block) env = evalStmt(st, env);
+	} else { 
+		addError(errorval(iter@location, nodeID, "Number value expected. The repetitions must be a number in a repeat statement."));
+	}
 	return env;
 }
 

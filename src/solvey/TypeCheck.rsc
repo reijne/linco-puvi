@@ -29,10 +29,12 @@ TENV addSymbol(TENV env, Name name, Type t) {
 } 
 
 // Get all the errors in a concatenated string
-str getErrorString(TENV env) {
+str getErrorString(TENV env, map[loc, int] nodeLocs=()) {
 	str errorstring = "";
-	for (tuple[loc l, int nid, str msg] e <- env.errors) 
-		errorstring += "<e.nid>|<e.msg>\n";
+	for (tuple[loc l, int nid, str msg] e <- env.errors) {
+		if (nodeLocs == ()) errorstring += "<e.nid>|<e.msg>\n";
+		else errorstring += "<nodeLocs[e.l]>|<e.msg>\n";
+	}
 	return errorstring == "" ? errorstring : errorstring[..-1];
 }
 
@@ -317,7 +319,7 @@ TENV checkStmt(Stmt:ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseB
 	return env;
 }
 
-TENV checkStmt(Stmt:repeatStmt(int iter, list[Stmt]block), TENV env) {
+TENV checkStmt(Stmt:repeatStmt(Expr iter, list[Stmt]block), TENV env) {
 	nodeID += 1;
 	for (stmt <- block) env = checkStmt(stmt, env);
 	return env;

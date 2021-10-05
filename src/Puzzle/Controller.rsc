@@ -27,7 +27,7 @@ public java str startApplication(str os, str appName);
 private str os = "windows"; // {"windows", "linux", "macos"}
 //private loc showeyDef = |project://Puzzle/src/Puzzle/serialised.show|;
 // Set these variables to change the visualisation and which file the solver will program in.
-private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/PLANES.show|;
+private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/showdef.show|;
 private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 private str showeyBuilder = "ShoweyBuilder";
@@ -40,6 +40,8 @@ private list[value] expectedOutput = [];
 private str labeled = "";
 private TENV tenv = <(),(),[]>;
 private VENV venv = <(), [], (), [], [], []>;
+private map[loc, int] nodeLocations = ();
+private int id = 0;
 
 // private list[str] skippedCategories = [];
 // private bool skipNesting = false;
@@ -72,15 +74,23 @@ public void createSceney() {
 	createSceney(serialised);
 }
 
+public void updateCollectable(loc src) {
+	try {updateCollectable(nodeLocations[src]);} catch: ;
+}
+
+public void updateHighlight(loc src) {
+	try {updateHighlight(nodeLocations[src]);} catch: ;
+}
+
 public void updateErrors() {
-	str typeerrorstring = getErrorString(tenv);
-	str evalerrorstring = getErrorString(venv);
+	str typeerrorstring = getErrorString(tenv, nodeLocs=nodeLocations);
+	str evalerrorstring = getErrorString(venv, nodeLocs=nodeLocations);
 	if (typeerrorstring == "" || evalerrorstring == "") updateErrors(typeerrorstring + evalerrorstring);
 	else updateErrors(typeerrorstring + "\n" + evalerrorstring);
 }
 
 public void updateBranches() {
-	str branchstring = getBranchString(evalProgram(solution));
+	str branchstring = getBranchString(venv, nodeLocations);
 	//print("BranchString::<branchstring>\n");
 	updateBranches(branchstring);
 }
@@ -96,8 +106,34 @@ public Tree errorAnnotator(Tree t) {
 	return t[@messages = errors];
 }
 
+public void createNodeLocations(Program pro) {
+	nodeLocations = ();
+	id = 1;
+	top-down visit(pro) {
+		case Boolean b: {
+			nodeLocations[b@location] = id;
+			id += 1;
+		}
+		case Type t: {
+			nodeLocations[t@location] = id;
+			id += 1;
+		}
+		case Expr e: {
+			nodeLocations[e@location] = id;
+			id += 1;
+		}
+		case Stmt s: {
+			nodeLocations[s@location] = id;
+			id += 1;
+		}
+	}
+}
+
 public set[Message] dataBuilder(Tree t) {
 	Program pro = implode(#Program, t);
+	println("in the builder");
+	createNodeLocations(pro);
+	println("AFTER LOCATIONS MADE");
 	labeled = labeledTraverse(pro);
 	tenv = checkProgram(pro);
 	venv = evalProgram(pro, input=input);
@@ -113,13 +149,11 @@ public void setup(list[value] ins, list[value] eout) {
 	
 	expectedOutput = eout;
 	startApplication(os, sceney);
-	
 	createSceney();
 	
 	sly_annotate(errorAnnotator);
 	sly_build(dataBuilder);
 	sly_register();
-	
 	print("Click here to start! :: <solution>");
 }
 
@@ -130,21 +164,19 @@ public void updater() {
 	if (gameType == "shooter") updateErrors();
 	else if (gameType == "platformer") updateBranches();
 	
-	print("\n\n\n====================Puzzle Info");
-	checkOutputs();
+	print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+			'====================Puzzle Info");
 	checkState();
 	printVariables();
+	checkOutputs();
 	print("====================END Puzzle Info");
-	
-	updateCollectable(5);
-	updateEnemy(10);
 }
 
 public void checkOutputs() {
 	list[value] actualOutput = venv.outputs;
 	if (actualOutput != []) print("\n==========Outputs\n<actualOutput>");
 	
-	if (actualOutput == expectedOutput) println("\nThe output is correct!");
+	if (actualOutput == expectedOutput) println("\nThe output is expected!");
 	else 	println("\nThe output is not quite what was expected");
 }
 
@@ -172,7 +204,7 @@ public void printVariables() {
 }
 
 public void makePuzzle(list[value] ins=[], list[value] eout=[]) {
-	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Empty_Puzzle.sly|));
 	setup(ins, eout);
 	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
 }
@@ -204,11 +236,27 @@ public void makePlatformer(list[value] ins=[], list[value] eout=[]) {
 }
 
 // Make multiple choice puzzle
+public void multipleChoicePuzzle() {
+	ins = [1, 2];
+	eout = ["A"];
+	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Choice_Fibonnaci.sly|));
+	setup(ins, eout);
+	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
+}
 // header :: Uncomment the choice and see what happens
 // addChoice("code snippet")
 
 // Make ordering puzzle 
 // Order the sections to fix errors / make the visualisation show something
+// Make multiple choice puzzle
+public void orderingPuzzle() {
+	ins = [8, 13];
+	eout = [5, 3, 2, 1, 1, 0];
+	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Order_Fibonnaci.sly|));
+	setup(ins, eout);
+	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
+}
+
 
 // make addition puzzle
 // Add a piece of code such that the output is correct

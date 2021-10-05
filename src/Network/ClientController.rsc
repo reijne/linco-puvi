@@ -167,3 +167,22 @@ void updateCollectable(int nodeID) {
 void updateInteraction(str interactionType) {
 	sendMessage(remoteCall("updateInteraction", interactionType, false));
 }
+
+@doc {
+	Update the current highlighted node
+}
+void updateHighlight(int nodeID) {
+	sendMessage(remoteCall("updateHighlight", "<nodeID>", false));
+}
+
+@doc {
+	Update the sequence of highlighted nodes, with the duration of light.
+}
+void updateSequence(list[int] sequence, real duration) {
+	str s = "";
+	for (int id <- sequence) s += "<id>,";
+	s = s[..-1] + "+<duration>";
+	sendMessage(remoteCall("updateSequence", s, false));
+}
+
+

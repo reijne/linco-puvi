@@ -255,6 +255,16 @@ public str labeledTraverse(ifStmt(Expr cond,list[Stmt] block))  =
 -out-Stmt-block
 out-Stmt-ifStmt";
 
+public str labeledTraverse(repeatStmt(Expr iter,list[Stmt] block))  =
+"in-Stmt-repeatStmt
+-in-Expr-iter
+<labeledTraverse(iter)>
+-out-Expr-iter
+-in-list[Stmt]-block
+"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
+-out-Stmt-block
+out-Stmt-repeatStmt";
+
 public str labeledTraverse(exprStmt(Expr expr))  =
 "in-Stmt-exprStmt
 -in-Expr-expr
@@ -294,13 +304,6 @@ public str labeledTraverse(outputStmt(Expr expr))  =
 <labeledTraverse(expr)>
 -out-Expr-expr
 out-Stmt-outputStmt";
-
-public str labeledTraverse(repeatStmt(int iter,list[Stmt] block))  =
-"in-Stmt-repeatStmt
--in-list[Stmt]-block
-"+"<for (blockItem <- block){><labeledTraverse(blockItem)>\n<}>"[..-1]+"
--out-Stmt-block
-out-Stmt-repeatStmt";
 
 public str labeledTraverse(assStmt(str id,Expr expr))  =
 "in-Stmt-assStmt

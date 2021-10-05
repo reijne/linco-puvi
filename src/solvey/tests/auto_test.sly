@@ -1,1 +1,5 @@
-2+2
+if (bolletje)
+	something
+else
+	something2
+end if

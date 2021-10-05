@@ -127,7 +127,7 @@ test bool ifelseStatement() {
 }
 
 test bool repeatStatement() {
-	return buildLines("Repeat statement", ["repeat (9)\n\tx \<- x+1\nend repeat"]);
+	return buildLines("Repeat statement", ["repeat (9)\n\tx \<- x+1\nend repeat", "number x\nx\<-5repeat (x)\n\tx \<- x+1\nend repeat"]);
 }
 
 test bool whileStatement() {

@@ -2,8 +2,6 @@
 number x
 x <- 4
 
-if (true)
+if (x > 4)
+	output("big")
 end if
-
-repeat(4)
-end repeat

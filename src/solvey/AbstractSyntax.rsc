@@ -54,7 +54,7 @@ data Stmt = exprStmt(Expr expr)
 				   | outputStmt(Expr expr) 
 				   | ifStmt(Expr cond, list[Stmt] block) 
 				   | ifElseStmt(Expr cond, list[Stmt] thenBlock, list[Stmt] elseBlock) 
-				   | repeatStmt(int iter, list[Stmt]block) 
+				   | repeatStmt(Expr iter, list[Stmt]block) 
 				   | whileStmt(Expr cond, list[Stmt] block) 
 				   | funDef(Type datatype, str id, list[Parameter] parameters, list[Stmt] block); 
 
@@ -62,6 +62,8 @@ data Parameter = parameter(Type datatype, str id);
 
 anno loc Program@location;
 
+anno loc Boolean@location;
+anno loc Type@location;
 anno loc Expr@location;
 anno loc Stmt@location;
 

@@ -88,7 +88,7 @@ syntax Stmt = exprStmt: Expr expr
 					   | outputStmt: "output" "(" Expr expr ")"
 					   | ifStmt: "if" "(" Expr cond ")"  Stmt* block "end" "if"
 					   | ifElseStmt: "if" "(" Expr cond ")"  Stmt* thenBlock "else" Stmt* elseBlock "end" "if"
-					   | repeatStmt: "repeat" "(" Number iter ")" Stmt* block "end" "repeat"
+					   | repeatStmt: "repeat" "(" Expr iter ")" Stmt* block "end" "repeat"
 					   | whileStmt: "while" "(" Expr cond ")"  Stmt* block "end" "while"
 					   | funDef: Type datatype "function" ID id "(" {Parameter ","}* parameters ")"  Stmt* block "end" "function";
 
