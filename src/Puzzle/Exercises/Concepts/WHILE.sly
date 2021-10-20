@@ -1,0 +1,25 @@
+// A while statement can be used to execute a code block multiple times based on a condition.
+// While the condition between the parentheses is true, the code block will be executed  until the condition changes.
+// The code block is the lines after the ending parenthesis ")" and "end while"
+
+// Examples:
+number iterator
+iterator <- 0
+
+while (iterator < 5)
+	output(iterator)
+end while
+
+// Be very careful with while(true), this will loop forever and will crash!
+while(true)
+	output("This will never stop")
+end while
+
+// Instead you could use a variable to make sure you can exit the while
+bool condition
+condition <- true
+
+while (condition)
+	output("Running the loop")
+	condition <- false // after setting the condition to false the while loop will stop
+end while

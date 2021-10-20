@@ -1,0 +1,13 @@
+// An input() expression is placed by the puzzle creator and will assign a variable 
+// Here we assign the input value from the puzzle to the number variable called random
+number limit
+limit <- input()
+
+// You are tasked with calculating the sum of numbers up until the input number
+// Three output values are expected.
+// 1: The sum of all even values up to the limit
+output(0)
+// 2: The sum of all uneven values up to the limit
+output(0)
+// 3: The sum of all numbers up to the limit
+output(0)

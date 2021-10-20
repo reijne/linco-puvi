@@ -89,7 +89,7 @@ test bool listCreation() {
 }
 
 test bool arithmetics() {
-	return buildLines("Arithmetic and Assignment", ["2+2",
+	return buildLines("Arithmetic and Assignment", ["x \<- 2+2",
 															"x \<- 1 ** 2",
 															"x \<- num1 ^ num2",
 															"x \<- num1 * num2",
@@ -144,15 +144,15 @@ test bool functionCall() {
 }
 
 test bool bracketExpression() {
-	return buildLines("Bracket Expression", ["(2)","(2+2)","two \<- (2)"]);
+	return buildLines("Bracket Expression", ["x \<- (2)","x \<- (2+2)","two \<- (2)"]);
 }
 
 test bool inoutput() {
-	return buildLines("IO time", ["input()", "x \<- input()", "output(\"hello world\")"]);
+	return buildLines("IO time", ["x \<- input()", "output(\"hello world\")"]);
 }
 
 // DO NOT REMOVE OR ALTER THE FOLLOWING LIST DECLARATION.
 // Keeps track of the currently made tests for AST such that they can be utilised elsewhere.
-// This line has to be the last in order for the update tests function to work properly !!!!!!!!
+// This line has to be the last in order for the update tests function to generate it here properly !!!!!!!!
 public list[bool()] currentAbstractTests = [declarations,listCreation,arithmetics,stringConcat,boolOperators,boolComparison,ifStatement,ifelseStatement,repeatStatement,whileStatement,functionDefinition,functionCall,bracketExpression,inoutput];
 

@@ -1,0 +1,4 @@
+// An input expression is supplied by the puzzle creator. It is used to give you variables and their values.
+// An example of how this could look is:
+number supplied
+supplied <- input()

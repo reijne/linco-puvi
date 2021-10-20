@@ -1,0 +1,15 @@
+// An assignment transfers a value onto a variable.
+// Using this we can set values of variables and (re)use them
+
+// A bool is either true or false and is used for logic.
+bool isWorth
+isWorth <- true 
+
+// A number is a whole number 
+number age
+age <- -24
+
+// A string is a collection of characters strung together using ""
+string name
+name <- "Bob"
+

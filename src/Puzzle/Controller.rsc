@@ -27,7 +27,7 @@ public java str startApplication(str os, str appName);
 private str os = "windows"; // {"windows", "linux", "macos"}
 //private loc showeyDef = |project://Puzzle/src/Puzzle/serialised.show|;
 // Set these variables to change the visualisation and which file the solver will program in.
-private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/showdef.show|;
+private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/OLD.show|;
 private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 private str showeyBuilder = "ShoweyBuilder";
@@ -42,6 +42,7 @@ private TENV tenv = <(),(),[]>;
 private VENV venv = <(), [], (), [], [], []>;
 private map[loc, int] nodeLocations = ();
 private int id = 0;
+private list[int] executedPath = [];
 
 // private list[str] skippedCategories = [];
 // private bool skipNesting = false;
@@ -131,12 +132,15 @@ public void createNodeLocations(Program pro) {
 
 public set[Message] dataBuilder(Tree t) {
 	Program pro = implode(#Program, t);
-	println("in the builder");
 	createNodeLocations(pro);
-	println("AFTER LOCATIONS MADE");
 	labeled = labeledTraverse(pro);
 	tenv = checkProgram(pro);
 	venv = evalProgram(pro, input=input);
+	list[int] nonExecuted = [nodeLocations[n] | n <- venv.nonBranches]; 
+	println(venv.nonBranches);
+	println(nonExecuted);
+	executedPath = [0..id] - nonExecuted;
+	println(executedPath);
 	updater();
 	return {};
 }
@@ -154,7 +158,7 @@ public void setup(list[value] ins, list[value] eout) {
 	sly_annotate(errorAnnotator);
 	sly_build(dataBuilder);
 	sly_register();
-	print("Click here to start! :: <solution>");
+	println("Click here to code! :: <solution>");
 }
 
 public void updater() {
@@ -163,8 +167,10 @@ public void updater() {
 			
 	if (gameType == "shooter") updateErrors();
 	else if (gameType == "platformer") updateBranches();
+	updateSequence(executedPath, 1.0);
 	
 	print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+			'Click here to code! :: <solution>
 			'====================Puzzle Info");
 	checkState();
 	printVariables();
@@ -186,8 +192,8 @@ public void checkOutputs() {
 public void checkState() {
 	if (tenv.errors != [] || venv.errors != []) {
 		println("\n==========Errors");
-		for (e <- tenv.errors) println(e);
-		for (e <- venv.errors) println(e);
+		for (e <- tenv.errors) println("-<e.msg>@<e.l>");
+		for (e <- venv.errors) println("-<getErrorTuple(e)[2]>@<getErrorTuple(e)[0]>");
 	}
 	//tenv.symbols.contains(x, type=number)
 }
@@ -219,7 +225,7 @@ public void reset() {
 }
 public void makeShooter(list[value] ins=[], list[value] eout=[]) {
 	expectedOut = eout;
-	writeFile(solution, "// Type some code here and pray to the gods it shows in the scene :)\n");
+	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Bob_is_old.sly|));
 	setup(ins, eout);
 	updateMessage("The errors in the code spawn enemies.\nFix them before they fix you!\n", 4.0);
 	gameType = "shooter";

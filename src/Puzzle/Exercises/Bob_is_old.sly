@@ -17,7 +17,7 @@ age_limit <- input()
 
 bool is_old
 // Assign the right value to the 'is_old' variable below.
-is_old <- false
+is_old <- true + false
 
 if (is_old)
 	name <- name + "-is too old"

@@ -1,0 +1,11 @@
+// A declaration creates a place in computer memory in order to store a value
+// These declarations can be of different types.
+
+// A bool is either true or false and is used for logic.
+bool isWorth
+
+// A number is a whole number 
+number age
+
+// A string is a collection of characters strung together using ""
+string name

@@ -50,6 +50,8 @@ syntax Expr = idExpr: ID id !>> "("
 					  > funCall: ID id "(" {Expr ","}* args")"
 					  > bracketExpr: "(" Expr e ")"
 					  
+					  > right unaryExpr: "-" number Number
+					  
 					  > left ( left powExpr: Expr lhs "**" Expr rhs
 					  			 | left powExpr: Expr lhs "^" Expr rhs)
 					  			 
@@ -73,24 +75,24 @@ syntax Expr = idExpr: ID id !>> "("
 					  						 | non-assoc neqExpr: Expr lhs "!=" Expr rhs
 					  						 | non-assoc gtExpr: Expr lhs "\>" Expr rhs
 					  						 | non-assoc gteExpr: Expr lhs "\>=" Expr rhs
-					  						 | non-assoc ltExpr: Expr lhs "\<" Expr rhs
+					  						 | non-assoc ltExpr: Expr lhs "\<" !<< "\<" Expr rhs
 					  						 | non-assoc lteExpr: Expr lhs "\<=" Expr rhs) 
 					  ;
 
 
 // All possible statements
-syntax Stmt = exprStmt: Expr expr
-					   | decl: Type datatype ID id
+syntax Stmt = decl: Type datatype ID id
 					   | listDecl: "list" "[" Type datatype "]" ID id
 					   | returnStmt: "return" Expr expr
-					   | assStmt: ID id "\<-" Expr expr
-					   | assStmt: ID id "=" Expr expr
 					   | outputStmt: "output" "(" Expr expr ")"
 					   | ifStmt: "if" "(" Expr cond ")"  Stmt* block "end" "if"
 					   | ifElseStmt: "if" "(" Expr cond ")"  Stmt* thenBlock "else" Stmt* elseBlock "end" "if"
 					   | repeatStmt: "repeat" "(" Expr iter ")" Stmt* block "end" "repeat"
 					   | whileStmt: "while" "(" Expr cond ")"  Stmt* block "end" "while"
-					   | funDef: Type datatype "function" ID id "(" {Parameter ","}* parameters ")"  Stmt* block "end" "function";
+					   | funDef: Type datatype "function" ID id "(" {Parameter ","}* parameters ")"  Stmt* block "end" "function"
+					   | assStmt: ID id "\<-" Expr expr
+					   | assStmt: ID id "=" Expr expr;
+					   //> non-assoc exprStmt: Expr expr;
 
 syntax Parameter = parameter: Type datatype ID id;
 

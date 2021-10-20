@@ -1,0 +1,9 @@
+// An if statement can be used to have a part of code execute based on a condition being true
+// the code between the closing parenthesis and "end if" will only execute if the condition
+// that is the boolean expression between the parentheses is true 
+
+// It looks as follows:
+if (true)
+	output("execute what is inside until end if")
+	output(2 + -2)
+end if

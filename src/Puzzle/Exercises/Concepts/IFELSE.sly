@@ -1,0 +1,9 @@
+// An ifelse statement is very similar to an if statement, with the added effect the else clause.
+// The else clause is used to determine what needs to be done if the condition is not true.
+
+// An example of an ifelse statement
+if (false)
+	output("the condition is true")
+else
+	output("the condition is false")
+end if

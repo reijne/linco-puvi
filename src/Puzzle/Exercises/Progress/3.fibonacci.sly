@@ -1,0 +1,17 @@
+// You are tasked with calculating fibonacci numbers 
+// These are calculated as succeeding numbers by summation of the last two numbers
+// The first fibonnaci number is 0
+// The second is 1
+// This allows you to calculate the third, 0 + 1 = 1 again.
+// The current state is 0, 1, 1
+// Using the summation rule of the last two numbers we get 1+1 = 2
+// Bringing us to 0, 1, 1, 2
+// Next up would be 1 + 2 = 3, and so forth..
+
+// You are given an input amount, which determines how many fibonacci numbers are needed to be output.
+// The numbers are expected to be output in order with a comma, in between.
+// If the number is above 42 then you _only_ output "number too large"
+number amount
+amount <- input()
+
+output("number too large")

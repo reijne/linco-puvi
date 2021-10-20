@@ -1,0 +1,23 @@
+// A repeat statement can be used to execute a code block a certain number of times.
+// The iterator part between the parentheses determines how many times the code is executed.
+// The code block is between the ending parenthesis ")" and "end repeat"
+
+// Examples:
+// first number age is created and assigned 2
+number age
+age <- 2
+
+// Then the repeat statement is used to add to the age twice and output the age at the stages
+repeat (2)
+	age <- age + 1
+	output(age)
+end repeat
+
+// Here we create a number iterations
+number iterations
+iterations <- 5
+
+// The repeat statement will execute the amount of iterations
+repeat (iterations)
+	output("----Loading-----")
+end repeat

@@ -25,6 +25,8 @@ data Expr = idExpr(str id)
 				  | funCall(str id, list[Expr] args) 
 				  | bracketExpr(Expr expr)
 				  
+				  | unaryExpr(int number) 
+				  
 				  | powExpr(Expr lhs, Expr rhs) 
 				  | mulExpr(Expr lhs, Expr rhs) 
 				  | divExpr(Expr lhs, Expr rhs) 

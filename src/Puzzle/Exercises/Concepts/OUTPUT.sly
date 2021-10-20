@@ -1,0 +1,10 @@
+// An output statement is used to output a value.
+// It takes bool, number or string values and outputs them for the puzzle info.
+// This can also be used to determine the state of variables in a given part of the code.
+
+// examples:
+output(2)
+output(2 + 2)
+output(true)
+output(false)
+output("Hello World")
