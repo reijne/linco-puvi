@@ -11,9 +11,9 @@ number age
 number age_limit
 
 name <- input()
-age <- input()
+age <- input() + "years"
 
-age_limit <- input()
+age_limit <- input() and false
 
 bool is_old
 // Assign the right value to the 'is_old' variable below.

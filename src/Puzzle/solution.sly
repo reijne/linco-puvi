@@ -1,26 +1,9 @@
-// You are in charge of determining who is admissible to the youth club YC.
-// To do this there are two input variables: the name and age of a person.
-// The third input variable determines what the age limit is for the club.
-// 	1. Your job is to assign the right value to the variable: is_old
-// 	2. Error Enemies Game :: Fix all the errors in the code!
-/// START by typing your name and saving the file!
-/// NAME :: 
+// The output statement can be used to "print" to the terminal, the black box showing the puzzle information.
+// In this puzzle you are first going to => output "Hello World"
+// NOTE** the capitalisation matters
 
-string name
-number age
-number age_limit
+// Here an example of how to OUTPUT a string:
+output("something")
 
-name <- input()
-age <- input()
-
-age_limit <- input()
-
-bool is_old
-// Assign the right value to the 'is_old' variable below.
-is_old <- false
-
-if (is_old)
-	name <- name + "-is too old"
-end if
-
-output(name)
+// Now try it out for yourself!
+output("Hello World")

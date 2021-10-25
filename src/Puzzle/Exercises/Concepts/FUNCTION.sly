@@ -1,0 +1,28 @@
+// A function is a block of code that can be executed whenever desired.
+// It's can be used when some functionality is reusable
+// A function needs a name, for future reference
+//  It also needs a return type, that is what the result of the function will be
+// This can be a number, bool, or string.
+// It is defined as follows:
+
+number function one()
+	// Anything in here will be part of the function code.
+	return 1
+end function
+
+// Now that we have the function we can call it and execute it:
+number start
+start <- one()
+
+// Functions can do a lot more than just returning a value.
+// They can have arguments. 
+// These are variables that are input to the function
+// Below example has two number arguments, width and height
+// The addition of these is returned
+
+number function add(number width, number height)
+	return width + height
+end function
+
+// The add function can now be called using two numbers
+start <- add(20, 30)

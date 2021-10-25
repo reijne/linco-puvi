@@ -1,10 +1,15 @@
 // An input() expression is placed by the puzzle creator and will assign a variable 
-// Here we assign the input value from the puzzle to the number variable called random
-number random
-random <- input()
+// Here we assign the input value from the puzzle to the number variable called unkown
+number unknown
+unknown <- input()
 
 // You are tasked with determining if the number is positive or not.
 // If it is positive: You will output "positivity"
 // if it is not positive: you will output "negativity"
 
 // NOTE** you can use the IFELSE statement for this
+if (unknown >= 0)
+	output("positivity")
+else
+	output("negativity")
+end if

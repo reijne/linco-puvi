@@ -6,12 +6,35 @@
 // The current state is 0, 1, 1
 // Using the summation rule of the last two numbers we get 1+1 = 2
 // Bringing us to 0, 1, 1, 2
-// Next up would be 1 + 2 = 3, and so forth..
+// Next up would be 1 + 2 = 3, and so forth.
 
 // You are given an input amount, which determines how many fibonacci numbers are needed to be output.
 // The numbers are expected to be output in order with a comma, in between.
-// If the number is above 42 then you _only_ output "number too large"
+// If the number is above 42, you  *only* output "number too large"
+// If the number is below or equal to 0, you only *only* output "number below zero"
 number amount
 amount <- input()
 
-output("number too large")
+if (amount <= 0 or amount > 42)
+	if (amount <= 0)
+		output("number below zero")
+	else
+		output("number too large")
+	end if
+else
+	number fibo
+	fibo <- 0
+	
+	number nacci
+	nacci <- 1
+	
+	number temp
+	
+	repeat (amount)
+		output(fibo)
+		output(",")
+		temp <- nacci // store highest value
+		nacci <- fibo + nacci  // compute new high
+		fibo <- temp // set stored high to low
+	end repeat
+end if

@@ -62,14 +62,6 @@ syntax Expr = idExpr: ID id !>> "("
 					   >left ( left addExpr: Expr lhs "+" Expr rhs
 					   	         | left minExpr: Expr lhs "-" Expr rhs)
 					  
-					  > left ( left andExpr: Expr lhs "and" Expr rhs
-					  			| left andExpr: Expr lhs "&&" Expr rhs
-					  			| left orExpr: Expr lhs "or" Expr rhs
-					  			| left orExpr: Expr lhs "||" Expr rhs)
-					  			
-					  >right ( right notExpr: "not" Expr expr 
-					  			  | right notExpr: "!" Expr expr) 
-					  			  
 					  > non-assoc ( non-assoc eqExpr: Expr lhs "==" Expr rhs
 					  						 | non-assoc neqExpr: Expr lhs "=/=" Expr rhs
 					  						 | non-assoc neqExpr: Expr lhs "!=" Expr rhs
@@ -77,6 +69,14 @@ syntax Expr = idExpr: ID id !>> "("
 					  						 | non-assoc gteExpr: Expr lhs "\>=" Expr rhs
 					  						 | non-assoc ltExpr: Expr lhs "\<" !<< "\<" Expr rhs
 					  						 | non-assoc lteExpr: Expr lhs "\<=" Expr rhs) 
+					  						 
+					  >right ( right notExpr: "not" Expr expr 
+					  			  | right notExpr: "!" Expr expr) 	
+					  			  
+					  > left ( left andExpr: Expr lhs "and" Expr rhs
+					  			| left andExpr: Expr lhs "&&" Expr rhs
+					  			| left orExpr: Expr lhs "or" Expr rhs
+					  			| left orExpr: Expr lhs "||" Expr rhs)					  						  			  	
 					  ;
 
 

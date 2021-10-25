@@ -238,7 +238,7 @@ SolveyVal evalExpr(Expr:andExpr(Expr lhs, Expr rhs), VENV env) {
 	addError(errorval(Expr@location, nodeID, "AND operation requires bool arguments on both sides"));
 }
 
-SolveyVal evalExpr(Expr:andExpr(Expr lhs, Expr rhs), VENV env) { 
+SolveyVal evalExpr(Expr:orExpr(Expr lhs, Expr rhs), VENV env) { 
 	nodeID += 1;
 	if (add2nonTraversed) nonTraversed += Expr@location;
 	return (boolval(b1) := evalExpr(lhs, env) && boolval(b2) := evalExpr(rhs, env)) ? 

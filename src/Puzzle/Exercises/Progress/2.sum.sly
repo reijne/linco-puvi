@@ -1,13 +1,40 @@
-// An input() expression is placed by the puzzle creator and will assign a variable 
-// Here we assign the input value from the puzzle to the number variable called random
+// An INPUT expression is placed by the puzzle creator and will assign a variable 
+// Here we assign the input value from the puzzle to the number variable called limit
 number limit
 limit <- input()
 
 // You are tasked with calculating the sum of numbers up until the input number
-// Three output values are expected.
+// If the input number is smaller or equal to 0, just output the standard values (all 0s)
+// Three output values are expected 1, 2, 3.
+
+// HINT** use the modulo operator % 2 to check if a number is divisible by two
+
 // 1: The sum of all even values up to the limit
-output(0)
+number evensum
+evensum <- 0
+
 // 2: The sum of all uneven values up to the limit
-output(0)
+number unevensum
+evensum <- 0
+
 // 3: The sum of all numbers up to the limit
-output(0)
+number sum
+sum <- 0
+
+if (limit > 0)
+	number iter
+	iter <- 0
+	repeat(limit)
+		if (iter % 2 == 0)
+			evensum <- evensum + iter
+		else
+			unevensum <- unevensum + iter
+		end if
+		sum <- sum + iter
+		limit <- limit + 1
+	end repeat
+end if
+
+output(evensum)
+output(unevensum)
+output(sum) 

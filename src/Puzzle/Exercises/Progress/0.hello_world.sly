@@ -1,8 +1,9 @@
 // The output statement can be used to "print" to the terminal, the black box showing the puzzle information.
-// In this puzzle you are first going to output "Hello World"
+// In this puzzle you are first going to => output "Hello World"
 // NOTE** the capitalisation matters
 
-// Here an example of how to output a string:
+// Here an example of how to OUTPUT a string:
 output("something")
 
 // Now try it out for yourself!
+output("Hello World")
