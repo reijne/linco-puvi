@@ -1,4 +1,4 @@
-package Puzzle;
+package Visualisation;
 
 import java.io.IOException;
 import java.net.URL;

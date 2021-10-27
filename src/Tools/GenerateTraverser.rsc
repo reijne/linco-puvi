@@ -13,13 +13,15 @@ private list[str] literals = ["str", "int"];
 @doc {
 	Generate a traverser of Solvey ASTs that labels before and after states
 }
-public void genTraverser() = genTraverser(#Program);
+public void genTraverser() = genTraverser(#Program, "module Solvey::Traverser", "import Solvey::AbstractSyntax;");
 
 @doc {
 	Generate a traverser for the given tree that labels before and after states for every node.
 }
-public void genTraverser(node tree) {
-	str travContent = "//This is a generated file, do not manually alter unless you absolutely know what you\'re doing, and \n//dont mind getting your work overwritten upon next generation.\n\n // Traverser module implementing a custom labeled traversal of a Solvey AST\nmodule Solvey::Traverser\nimport Solvey::AbstractSyntax;\n\n";
+public void genTraverser(node tree, str modulee, str imports, loc dest=traverserFile) {
+	str travContent = "//This is a generated file, do not manually alter unless you absolutely know what you\'re doing, and \n//dont mind getting your work overwritten upon next generation.\n\n 
+								   '// Traverser module implementing a custom labeled traversal of an AST\n
+								   '<modulee>\n<imports>\n\n";
 	
 	visit(tree) {
 		case cons(label(nodeName,adt(cateName,[])),[],[],{}): {
@@ -42,7 +44,7 @@ public void genTraverser(node tree) {
 			travContent += "out-<cateName>-<nodeName>\";\n\n";	
 		}
 	}
-	writeFile(traverserFile, travContent);
+	writeFile(dest, travContent);
 }
 
 @doc {

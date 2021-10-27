@@ -6,4 +6,4 @@
 output("something")
 
 // Now try it out for yourself!
-output("Hello World")
+output("Hello World")   

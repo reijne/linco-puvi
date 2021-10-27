@@ -31,8 +31,7 @@ else
 	number temp
 	
 	repeat (amount)
-		output(fibo)
-		output(",")
+		output(fibo)zo
 		temp <- nacci // store highest value
 		nacci <- fibo + nacci  // compute new high
 		fibo <- temp // set stored high to low

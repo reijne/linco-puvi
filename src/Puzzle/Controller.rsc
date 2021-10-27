@@ -13,6 +13,8 @@ import Solvey::ConcreteSyntax;
 import Solvey::TypeCheck;
 import Solvey::Evaluate;
 import Solvey::Traverser;
+
+// Language independent tools
 import Tools::NodeExtractor;
 import Tools::GenerateTraverser;
 
@@ -240,8 +242,10 @@ public void printVariables() {
 @doc {
 	Make a code puzzle, using a template, input and expected output.
 }
-public void makePuzzle(loc template=emptyPuzzle, list[value] ins=[], list[value] eout=[]) {
+public void makePuzzle(loc template=emptyPuzzle, loc show=showeyDef, 
+										list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, readFile(template));
+	showeyDef = show;
 	setup(ins, eout);
 	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
 }
@@ -260,8 +264,10 @@ public void reset() {
 @doc {
 	Set up the app as a shooter type game, where errors show up as enemies and launch.
 }
-public void makeShooter(loc template=errorEnemies, list[value] ins=[], list[value] eout=[]) {
+public void makeShooter(loc template=errorEnemies, loc show=showeyDef,
+											list[value] ins=[], list[value] eout=[]) {
 	expectedOut = eout;
+	showeyDef = show;
 	writeFile(solution, readFile(template));
 	setup(ins, eout);
 	updateMessage("The errors in the code spawn enemies.\nFix them before they fix you!\n", 4.0);
@@ -271,8 +277,10 @@ public void makeShooter(loc template=errorEnemies, list[value] ins=[], list[valu
 @doc {
 	Set up the game scene as a platformer with falling branches and collectables and launch.
 }
-public void makePlatformer(loc template=branchJumper, list[value] ins=[], list[value] eout=[]) {
+public void makePlatformer(loc template=branchJumper, loc show=showeyDef, 
+												list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, readFile(template));
+	showeyDef = show;
 	setup(ins, eout);
 	updateMessage("Collect all the shiny gold orbs spawned at every branch, but beware of non-executed branches!!!\n", 4.0);
 	gameType = "platformer";

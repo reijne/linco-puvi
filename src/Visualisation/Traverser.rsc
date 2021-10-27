@@ -1,9 +1,11 @@
 //This is a generated file, do not manually alter unless you absolutely know what you're doing, and 
 //dont mind getting your work overwritten upon next generation.
 
- // Traverser module implementing a custom labeled traversal of a Solvey AST
-module Solvey::Traverser
-import Solvey::AbstractSyntax;
+ 
+// Traverser module implementing a custom labeled traversal of an AST
+
+module Visualisation::Traverser
+import Visualisation::Syntax;
 
 public str labeledTraverse(image(int width,int height,Colour c))  =
 "in-Image-image

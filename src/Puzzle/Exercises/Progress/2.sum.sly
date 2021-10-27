@@ -15,7 +15,7 @@ evensum <- 0
 
 // 2: The sum of all uneven values up to the limit
 number unevensum
-evensum <- 0
+unevensum <- 0
 
 // 3: The sum of all numbers up to the limit
 number sum
