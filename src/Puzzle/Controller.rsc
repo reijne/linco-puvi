@@ -21,7 +21,7 @@ import Tools::GenerateTraverser;
 // API calls
 import Network::ClientController;
 
-@javaClass{Puzzle.Controller}
+@javaClass{Apps.Controller}
 public java str startApplication(str os, str appName);
 
 // Operating System

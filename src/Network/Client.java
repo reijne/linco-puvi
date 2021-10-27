@@ -32,8 +32,6 @@ public class Client {
     public IString sendMessage(IString msg) throws IOException {
 		String msgString = msg.getValue();
 		out.println(msgString);
-//		String resp = in.readLine();
-//		return values.string(resp); 
 		return values.string("");
     }
     

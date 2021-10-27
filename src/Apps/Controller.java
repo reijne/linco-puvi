@@ -1,4 +1,4 @@
-package Puzzle;
+package Apps;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +21,7 @@ public class Controller {
 		String relativePath = "";
 		
 		switch (os.getValue()) {
-			case "windows": relativePath = "Puzzle/Apps/"+app+"/Windows/"+app+".exe"; break; 
+			case "windows": relativePath = "Apps/Windows/"+app+"/"+app+".exe"; break; 
 			case "linux": break; 
 			case "macos": break; 
 		}
@@ -30,3 +30,5 @@ public class Controller {
 		Runtime.getRuntime().exec(appPath);
 	}
 }
+//D:\School\master_software_engineering\Thesis\Puzzle\bin\Apps\Sceney\Windows
+//D:/School/master_software_engineering/Thesis/Puzzle/bin/Apps/Windows/Sceney.exe

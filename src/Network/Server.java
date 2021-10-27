@@ -8,7 +8,7 @@ import io.usethesource.vallang.IValueFactory;
 
 // Inspiration:: https://www.baeldung.com/a-guide-to-java-sockets
 public class Server {
-//	private final IValueFactory values;
+	private final IValueFactory values;
 	private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
@@ -16,7 +16,7 @@ public class Server {
 
     // Initialise the server class using the IValueFactory (linking Rascal).
     public Server(IValueFactory values){
-//        this.values = values;
+        this.values = values;
     }
 
     // Start the server on port, listening for "ping"  to send back "pong".

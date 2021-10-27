@@ -1,40 +1,26 @@
-// You are tasked with calculating fibonacci numbers 
-// These are calculated as succeeding numbers by summation of the last two numbers
-// The first fibonnaci number is 0
-// The second is 1
-// This allows you to calculate the third, 0 + 1 = 1 again.
-// The current state is 0, 1, 1
-// Using the summation rule of the last two numbers we get 1+1 = 2
-// Bringing us to 0, 1, 1, 2
-// Next up would be 1 + 2 = 3, and so forth.
+// You are in charge of determining who is admissible to the youth club YC.
+// To do this there are two input variables: the name and age of a person.
+// The third input variable determines what the age limit is for the club.
+// 	1. Your job is to assign the right value to the variable: is_old
+// 	2. Error Enemies Game :: Fix all the errors in the code!
+/// START by typing your name and saving the file!
+/// NAME :: 
 
-// You are given an input amount, which determines how many fibonacci numbers are needed to be output.
-// The numbers are expected to be output in order with a comma, in between.
-// If the number is above 42, you  *only* output "number too large"
-// If the number is below or equal to 0, you only *only* output "number below zero"
-number amount
-amount <- input()
+string name
+number age
+number age_limit
 
-if (amount <= 0 or amount > 42)
-	if (amount <= 0)
-		output("number below zero")
-	else
-		output("number too large")
-	end if
-else
-	number fibo
-	fibo <- 0
-	
-	number nacci
-	nacci <- 1
-	
-	number temp
-	
-	repeat (amount)
-		output(fibo)
-		output(",")
-		temp <- nacci // store highest value
-		nacci <- fibo + nacci  // compute new high
-		fibo <- temp // set stored high to low
-	end repeat
+name <- input()
+age <- input() + "years"
+
+age_limit <- input() and false
+
+bool is_old
+// Assign the right value to the 'is_old' variable below.
+is_old <- true + false
+
+if (is_old)
+	name <- name + "-is too old"
 end if
+
+output(name)

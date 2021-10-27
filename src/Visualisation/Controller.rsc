@@ -14,7 +14,7 @@ import Tools::GenerateTraverser;
 // API calls
 import Network::ClientController;
 
-@javaClass{Visualisation.Controller}
+@javaClass{Apps.Controller}
 public java str startApplication(str os, str appName);
 
 // Location for generating the labeled traverser.
