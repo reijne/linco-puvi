@@ -1,26 +1,33 @@
-// You are in charge of determining who is admissible to the youth club YC.
-// To do this there are two input variables: the name and age of a person.
-// The third input variable determines what the age limit is for the club.
-// 	1. Your job is to assign the right value to the variable: is_old
-// 	2. Error Enemies Game :: Fix all the errors in the code!
-/// START by typing your name and saving the file!
-/// NAME :: 
+// In this code puzzle you are the branch detective.
+// You have to figure out which branches are being executed.
 
-string name
-number age
-number age_limit
+// We call a branch a piece of code that is executed depending on a condition
+// For instance the next IF statement will create a branch that will not be executed
+if (false)
+	// Branch 0
+	number never  
+end if 
 
-name <- input()
-age <- input() + "years"
-
-age_limit <- input() and false
-
-bool is_old
-// Assign the right value to the 'is_old' variable below.
-is_old <- true + false
-
-if (is_old)
-	name <- name + "-is too old"
+// The condition can be more tricky however
+number maybe
+if (2 ^ 1 > 2)
+	if (3 % 2 == 0)
+		// Branch 1
+		maybe <- 0 + 1
+	else 
+		// Branch 2
+		maybe <- 1 - 0
+	end if
+else
+	if (false or true and not false)
+		// Branch 3
+		maybe <- 1 * 1
+	else
+		// Branch 4
+		maybe <- 1 / 1
+	end if
+		
 end if
 
-output(name)
+// Now it is up to you to output which branch is being executed
+output(0)

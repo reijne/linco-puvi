@@ -1,4 +1,4 @@
-// Multiple choice puzzle. 
+// Ordering puzzle. 
 // You have received two numbers as input (low, high)
 // The goal is to determine if the numbers are fibonacci numbers.\n
 // Fibonacci number :: each number is the sum of two preceding ones.

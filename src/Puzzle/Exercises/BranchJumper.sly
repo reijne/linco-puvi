@@ -10,7 +10,7 @@ end if
 
 // The condition can be more tricky however
 number maybe
-if (2 + 3 / 2 >= 2)
+if (2 ^ 1 > 2)
 	if (3 % 2 == 0)
 		// Branch 1
 		maybe <- 0 + 1
