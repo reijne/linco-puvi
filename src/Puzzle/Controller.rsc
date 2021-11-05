@@ -14,7 +14,6 @@ import Solvey::TypeCheck;
 import Solvey::Evaluate;
 import Solvey::Traverser;
 
-import Puzzle::Lightlang;
 import util::IDEServices;
 import util::Benchmark;
 
@@ -66,12 +65,6 @@ public void createShowey() {
 	createShowey(getNodes());
 }
 
-// TODO make this update the running scene instead
-public void updateShowey() {
-	startApplication(os, showeyBuilder);
-	updateShowey(readFile(showeyDef));
-}
-
 @doc {
 	Initialise the Sceney instance using the specified showey definition.
 }
@@ -111,7 +104,6 @@ public void updateErrors() {
 }
 public void updateBranches() {
 	str branchstring = getBranchString(venv, nodeLocations);
-	//print("BranchString::<branchstring>\n");
 	updateBranches(branchstring);
 }
 
@@ -124,35 +116,10 @@ public Tree errorAnnotator(Tree t) {
 	VENV values = evalProgram(pro, input=input);	
 	errors = {};
 	
-	//t = addHighlight(t);
 	for (tuple[loc l, int i, str msg] te <-  types.errors) errors += error(te.msg, te.l);
 	for (e <- values.errors) errors += error(getErrorTuple(e)[2], getErrorTuple(e)[0]);
 	return t[@messages = errors];
 }
-
-//private Tree addHighlight(Tree t) {
-//	println("addHighlight");
-//	println(highlight);
-//	visit (t) {
-//		case node n: {
-//				annos = getAnnotations(n);
-//				println(annos);
-//				if (annos["category"]?) {
-//					n@category = "Highlighted";				
-//				}
-//				//println(getAnnotations(n));
-//				//println("eloc: <n@\loc>");
-//		}
-//		//case Stmt s: {
-//		//		println("sloc: <s@location>");
-//		//		if (s@location == highlight) {
-//		//			println("Adding highlight to <s>");
-//		//			s@category = "Highlighted";
-//		//		}
-//		//}
-//	}
-//	return t;
-//}
 
 @doc {
 	Create the mapping from source code locations to node locations.
@@ -196,24 +163,14 @@ public set[Message] dataBuilder(Tree t) {
 }
 
 @doc {
-	Set the location of the currently highlighted code fragment.
+	Get the node source location based on the id.
 }
-public set[Message] lightBuilder(Tree t) {
-	int nodeID = toInt(readFile(|project://Puzzle/src/Puzzle/lightfile.txt|)[..-2]);
-	loc nodeLocs = getNodeLoc(nodeID); 
-	return {};
-}
-
 public loc getNodeLoc(int id) {
-	//println("getting the location using id, <nodeLocations>");
 	for (<loca, nodeid> <- toList(nodeLocations)) {
 		print("current loc <loca>, <id>, <nodeid>");
 		if (nodeid == id) {
 			print("found loc <loca>");
 			return loca;
-			//highlight = location;
-			//println("setting lightlocation to <highlight>");
-			//break;
 		}
 	}
 	return solution;
@@ -234,20 +191,7 @@ public void setup(list[value] ins, list[value] eout) {
 	sly_build(dataBuilder);
 	sly_register();
 	
-	//setupHighlighter();
 	println("Click here to code! :: <solution>");
-}
-
-@doc {
-	Set up the highlighter which listens for changes made by sceney.
-}
-public void setupHighlighter() {
-	Contribution light = builder(lightBuilder);
-	str highlightName = "Highlighting";
-	updateLightfile("D:\\School\\master_software_engineering\\Thesis\\Puzzle\\src\\Puzzle\\lightfile.txt");
-	clearNonRascalContribution(highlightName);
-	registerLanguage(highlightName, "txt", ll_parse);
-	registerContributions(highlightName, {light});
 }
 
 @doc {
@@ -263,14 +207,14 @@ public void updater() {
 	if (liveVisualisation) updateSequence(executedPath, 1.0);
 	else blockingSequencer();
 	
-	//printPuzzleInformation();
+	printPuzzleInformation();
 }
 
 @doc {
 	Highlight the code and visualisation both, however block until the animation is complete.
 }
 private void blockingSequencer() {
-	for (nodeIdentifier <- executedPath) {
+	for (nodeIdentifier <- [0] + executedPath) {
 		updateHighlight(nodeIdentifier);
 		loc codeloc = getNodeLoc(nodeIdentifier);
 		//println(typeOf(util::IDEServices::edit));
