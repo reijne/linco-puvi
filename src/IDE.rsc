@@ -28,10 +28,11 @@ public void sly_annotate(Tree(Tree t) annotator) {
 // Pallete
 Color pansyPurple				= rgb(123, 0, 82, 1.0); // Standard Rascal Colour
 Color mediumSlateBlue		= rgb(100, 100, 220, 1.0);
-Color redGray					= rgb(150, 127, 127, 1.0);
-Color hunterGreen			= rgb(62, 105, 75, 1.0);
+Color redGray					    = rgb(150, 127, 127, 1.0);
+Color hunterGreen				= rgb(62, 105, 75, 1.0);
 Color pastelGreen				= rgb(76, 185, 68, 1.0);
-Color burgundy				= rgb(170, 6, 32, 1.0);
+Color burgundy					= rgb(170, 6, 32, 1.0);
+Color white 						= rgb(125,125,125, 1.0);
 
 public void sly_style() {
 	Contribution style = categories(
@@ -41,7 +42,8 @@ public void sly_style() {
 			"TypeKeyword": {foregroundColor(mediumSlateBlue), bold()},
 			"ID": {foregroundColor(mediumSlateBlue)},
 			"Truth": {foregroundColor(pastelGreen), bold(), italic()},
-			"FalseHood": {foregroundColor(burgundy), bold(), italic()}
+			"FalseHood": {foregroundColor(burgundy), bold(), italic()},
+			"Highlighted": {backgroundColor(white)}
 		)
 	);
 	conset += style;

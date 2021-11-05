@@ -1,7 +1,7 @@
 // A function is a block of code that can be executed whenever desired.
 // It's can be used when some functionality is reusable
 // A function needs a name, for future reference
-//  It also needs a return type, that is what the result of the function will be
+// It also needs a return type, that is what the result of the function will be
 // This can be a number, bool, or string.
 // It is defined as follows:
 

@@ -185,4 +185,11 @@ void updateSequence(list[int] sequence, real duration) {
 	sendMessage(remoteCall("updateSequence", s, false));
 }
 
+@doc {
+	Update the path where the highlight file exists.
+}
+void updateLightfile(str lightfile) {
+	sendMessage(remoteCall("updateLightfile", lightfile, false));
+}
+
 

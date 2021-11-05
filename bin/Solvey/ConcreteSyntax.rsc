@@ -32,7 +32,7 @@ lexical Comment
   | "//" ![\n]* $;
 
 // Program syntax
-start syntax Program = program: Stmt* statements;
+start syntax Program =  program: Stmt* statements;
 
 // All types
 syntax Type = @category="TypeKeyword" t_str:"string" 
@@ -41,42 +41,42 @@ syntax Type = @category="TypeKeyword" t_str:"string"
 					  | @category="TypeKeyword" t_list:"list";
 
 // All possible expressions
-syntax Expr = idExpr: ID id !>> "("
-					  | strExpr: "\""String string "\""
-					  | numExpr: Number number
-					  | boolExpr: Boolean boolean
-					  | listExpr: "[" {Expr ","}* items "]"
-					  > inputExpr:"input" "(" ")"
-					  > funCall: ID id "(" {Expr ","}* args")"
-					  > bracketExpr: "(" Expr e ")"
+syntax Expr =  idExpr: ID id !>> "("
+					  |  strExpr: "\""String string "\""
+					  |  numExpr: Number number
+					  |  boolExpr: Boolean boolean
+					  |  listExpr: "[" {Expr ","}* items "]"
+					  >  inputExpr:"input" "(" ")"
+					  >  funCall: ID id "(" {Expr ","}* args")"
+					  >  bracketExpr: "(" Expr e ")"
 					  
-					  > right unaryExpr: "-" number Number
+					  > right  unaryExpr: "-" number Number
 					  
-					  > left ( left powExpr: Expr lhs "**" Expr rhs
-					  			 | left powExpr: Expr lhs "^" Expr rhs)
+					  > left ( left  powExpr: Expr lhs "**" Expr rhs
+					  			 | left  powExpr: Expr lhs "^" Expr rhs)
 					  			 
-					  > left ( left mulExpr: Expr lhs "*" Expr rhs
-					    		 | left divExpr: Expr lhs "/" Expr rhs
-					    		 | left modExpr: Expr lhs "%" Expr rhs)
+					  > left ( left  mulExpr: Expr lhs "*" Expr rhs
+					    		 | left  divExpr: Expr lhs "/" Expr rhs
+					    		 | left  modExpr: Expr lhs "%" Expr rhs)
 					    		 
-					   >left ( left addExpr: Expr lhs "+" Expr rhs
-					   	         | left minExpr: Expr lhs "-" Expr rhs)
+					   >left ( left  addExpr: Expr lhs "+" Expr rhs
+					   	         | left  minExpr: Expr lhs "-" Expr rhs)
 					  
-					  > non-assoc ( non-assoc eqExpr: Expr lhs "==" Expr rhs
-					  						 | non-assoc neqExpr: Expr lhs "=/=" Expr rhs
-					  						 | non-assoc neqExpr: Expr lhs "!=" Expr rhs
-					  						 | non-assoc gtExpr: Expr lhs "\>" Expr rhs
-					  						 | non-assoc gteExpr: Expr lhs "\>=" Expr rhs
-					  						 | non-assoc ltExpr: Expr lhs "\<" !<< "\<" Expr rhs
-					  						 | non-assoc lteExpr: Expr lhs "\<=" Expr rhs) 
+					  > non-assoc ( non-assoc  eqExpr: Expr lhs "==" Expr rhs
+					  						 | non-assoc  neqExpr: Expr lhs "=/=" Expr rhs
+					  						 | non-assoc  neqExpr: Expr lhs "!=" Expr rhs
+					  						 | non-assoc  gtExpr: Expr lhs "\>" Expr rhs
+					  						 | non-assoc  gteExpr: Expr lhs "\>=" Expr rhs
+					  						 | non-assoc  ltExpr: Expr lhs "\<" !<< "\<" Expr rhs
+					  						 | non-assoc  lteExpr: Expr lhs "\<=" Expr rhs) 
 					  						 
-					  >right ( right notExpr: "not" Expr expr 
-					  			  | right notExpr: "!" Expr expr) 	
+					  >right ( right  notExpr: "not" Expr expr 
+					  			  | right  notExpr: "!" Expr expr) 	
 					  			  
-					  > left ( left andExpr: Expr lhs "and" Expr rhs
-					  			| left andExpr: Expr lhs "&&" Expr rhs
-					  			| left orExpr: Expr lhs "or" Expr rhs
-					  			| left orExpr: Expr lhs "||" Expr rhs)					  						  			  	
+					  > left ( left  andExpr: Expr lhs "and" Expr rhs
+					  			| left  andExpr: Expr lhs "&&" Expr rhs
+					  			| left  orExpr: Expr lhs "or" Expr rhs
+					  			| left  orExpr: Expr lhs "||" Expr rhs)					  						  			  	
 					  ;
 
 

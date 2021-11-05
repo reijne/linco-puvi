@@ -14,6 +14,10 @@ import Solvey::TypeCheck;
 import Solvey::Evaluate;
 import Solvey::Traverser;
 
+import Puzzle::Lightlang;
+import util::IDEServices;
+import util::Benchmark;
+
 // Language independent tools
 import Tools::NodeExtractor;
 import Tools::GenerateTraverser;
@@ -33,7 +37,7 @@ private loc branchJumper = |project://Puzzle/src/Puzzle/Exercises/BranchJumper.s
 private loc errorEnemies = |project://Puzzle/src/Puzzle/Exercises/ErrorEnemies.sly|;
 
 // Set these variables to change the visualisation and which file the solver will program in.
-private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/ErrorEnemies.show|;
+private loc showeyDef = |project://Puzzle/src/Puzzle/Shows/Progress.show|;
 private loc solution = |project://Puzzle/src/Puzzle/solution.sly|;
 
 // Application names
@@ -52,6 +56,7 @@ private VENV venv = <(), [], (), [], [], []>;
 private map[loc, int] nodeLocations = ();
 private int id = 0;
 private list[int] executedPath = [];
+private loc highlight = solution;
 
 @doc {
 	Create a fresh visualisation of the Solvey language.
@@ -73,6 +78,7 @@ public void updateShowey() {
 public void createSceney() {
  	str serialised = readFile(showeyDef);
  	if (serialised == "") throw IO("Empty visualisation found, make one using createShowey()");
+ 	startApplication(os, sceney);
 	createSceney(serialised);
 }
 
@@ -115,13 +121,38 @@ public void updateBranches() {
 public Tree errorAnnotator(Tree t) {
 	Program pro = implode(#Program, t); 
 	TENV types = checkProgram(pro);
-	VENV values = evalProgram(pro, input=input);
+	VENV values = evalProgram(pro, input=input);	
 	errors = {};
 	
+	//t = addHighlight(t);
 	for (tuple[loc l, int i, str msg] te <-  types.errors) errors += error(te.msg, te.l);
 	for (e <- values.errors) errors += error(getErrorTuple(e)[2], getErrorTuple(e)[0]);
 	return t[@messages = errors];
 }
+
+//private Tree addHighlight(Tree t) {
+//	println("addHighlight");
+//	println(highlight);
+//	visit (t) {
+//		case node n: {
+//				annos = getAnnotations(n);
+//				println(annos);
+//				if (annos["category"]?) {
+//					n@category = "Highlighted";				
+//				}
+//				//println(getAnnotations(n));
+//				//println("eloc: <n@\loc>");
+//		}
+//		//case Stmt s: {
+//		//		println("sloc: <s@location>");
+//		//		if (s@location == highlight) {
+//		//			println("Adding highlight to <s>");
+//		//			s@category = "Highlighted";
+//		//		}
+//		//}
+//	}
+//	return t;
+//}
 
 @doc {
 	Create the mapping from source code locations to node locations.
@@ -165,6 +196,30 @@ public set[Message] dataBuilder(Tree t) {
 }
 
 @doc {
+	Set the location of the currently highlighted code fragment.
+}
+public set[Message] lightBuilder(Tree t) {
+	int nodeID = toInt(readFile(|project://Puzzle/src/Puzzle/lightfile.txt|)[..-2]);
+	loc nodeLocs = getNodeLoc(nodeID); 
+	return {};
+}
+
+public loc getNodeLoc(int id) {
+	//println("getting the location using id, <nodeLocations>");
+	for (<loca, nodeid> <- toList(nodeLocations)) {
+		print("current loc <loca>, <id>, <nodeid>");
+		if (nodeid == id) {
+			print("found loc <loca>");
+			return loca;
+			//highlight = location;
+			//println("setting lightlocation to <highlight>");
+			//break;
+		}
+	}
+	return solution;
+}
+
+@doc {
 	Set up Solvey, Sceney and the annotator + builder	
 }
 public void setup(list[value] ins, list[value] eout) {
@@ -172,15 +227,27 @@ public void setup(list[value] ins, list[value] eout) {
 	reset();
 	sly_init();
 	input = ins;
-	
 	expectedOutput = eout;
-	startApplication(os, sceney);
-	createSceney();
 	
+	createSceney();
 	sly_annotate(errorAnnotator);
 	sly_build(dataBuilder);
 	sly_register();
+	
+	//setupHighlighter();
 	println("Click here to code! :: <solution>");
+}
+
+@doc {
+	Set up the highlighter which listens for changes made by sceney.
+}
+public void setupHighlighter() {
+	Contribution light = builder(lightBuilder);
+	str highlightName = "Highlighting";
+	updateLightfile("D:\\School\\master_software_engineering\\Thesis\\Puzzle\\src\\Puzzle\\lightfile.txt");
+	clearNonRascalContribution(highlightName);
+	registerLanguage(highlightName, "txt", ll_parse);
+	registerContributions(highlightName, {light});
 }
 
 @doc {
@@ -191,15 +258,41 @@ public void updater() {
 			
 	if (gameType == "shooter") updateErrors();
 	else if (gameType == "platformer") updateBranches();
-	updateSequence(executedPath, 1.0);
 	
+	bool liveVisualisation = true;
+	if (liveVisualisation) updateSequence(executedPath, 1.0);
+	else blockingSequencer();
+	
+	//printPuzzleInformation();
+}
+
+@doc {
+	Highlight the code and visualisation both, however block until the animation is complete.
+}
+private void blockingSequencer() {
+	for (nodeIdentifier <- executedPath) {
+		updateHighlight(nodeIdentifier);
+		loc codeloc = getNodeLoc(nodeIdentifier);
+		//println(typeOf(util::IDEServices::edit));
+		//edit(codeloc);
+		int starter = realTime();
+		while(starter + 1000 > realTime()) {
+			print("");
+		}
+	}
+}
+
+@doc {
+	Print the current information of the code puzzle to the terminal.
+}
+private void printPuzzleInformation() {
 	print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 			'Click here to code! :: <solution>
 			'====================Puzzle Info");
 	checkState();
 	printVariables();
 	checkOutputs();
-	print("====================END Puzzle Info");
+	print("\n==========Current Highlight: <highlight>");
 }
 
 @doc {
@@ -222,6 +315,7 @@ public void checkState() {
 		for (e <- tenv.errors) println("-<e.msg>@<e.l>");
 		for (e <- venv.errors) println("-<getErrorTuple(e)[2]>@<getErrorTuple(e)[0]>");
 	}
+	// Example to check if the number variable x is declared.
 	//tenv.symbols.contains(x, type=number)
 }
 
@@ -286,7 +380,7 @@ public void makePlatformer(loc template=branchJumper, loc show=showeyDef,
 	gameType = "platformer";
 }
 
-// Make multiple choice puzzle
+// Make multiwple choice puzzle
 public void multipleChoicePuzzle() {
 	ins = [1, 2];
 	eout = ["A"];

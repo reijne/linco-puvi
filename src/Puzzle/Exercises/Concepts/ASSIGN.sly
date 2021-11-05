@@ -12,4 +12,3 @@ age <- -24
 // A string is a collection of characters strung together using ""
 string name
 name <- "Bob"
-
