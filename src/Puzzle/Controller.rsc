@@ -55,7 +55,6 @@ private VENV venv = <(), [], (), [], [], []>;
 private map[loc, int] nodeLocations = ();
 private int id = 0;
 private list[int] executedPath = [];
-private loc highlight = solution;
 
 @doc {
 	Create a fresh visualisation of the Solvey language.
@@ -200,25 +199,27 @@ public void setup(list[value] ins, list[value] eout) {
 public void updater() {
 	updateSceney(labeled);
 			
-	if (gameType == "shooter") updateErrors();
-	else if (gameType == "platformer") updateBranches();
-	
-	bool liveVisualisation = true;
-	if (liveVisualisation) updateSequence(executedPath, 1.0);
-	else blockingSequencer();
-	
+	if (gameType == "platformer") { 
+		updateBranches();
+	} else {
+		if (gameType == "shooter") updateErrors();
+		manualSequence();
+		updateSequence(executedPath, 1.0);	
+	}
 	printPuzzleInformation();
 }
 
 @doc {
 	Highlight the code and visualisation both, however block until the animation is complete.
 }
-private void blockingSequencer() {
+private void manualSequence() {
 	for (nodeIdentifier <- [0] + executedPath) {
 		updateHighlight(nodeIdentifier);
 		loc codeloc = getNodeLoc(nodeIdentifier);
 		//println(typeOf(util::IDEServices::edit));
 		//edit(codeloc);
+		print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+					'Click here for the Highlight :: <codeloc>");
 		int starter = realTime();
 		while(starter + 1000 > realTime()) {
 			print("");
@@ -236,7 +237,6 @@ private void printPuzzleInformation() {
 	checkState();
 	printVariables();
 	checkOutputs();
-	print("\n==========Current Highlight: <highlight>");
 }
 
 @doc {
@@ -302,7 +302,7 @@ public void reset() {
 @doc {
 	Set up the app as a shooter type game, where errors show up as enemies and launch.
 }
-public void makeShooter(loc template=errorEnemies, loc show=showeyDef,
+public void makeShooter(loc template=errorEnemies, loc show=|project://Puzzle/src/Puzzle/Shows/ErrorEnemies.show|,
 											list[value] ins=[], list[value] eout=[]) {
 	expectedOut = eout;
 	showeyDef = show;
@@ -315,7 +315,7 @@ public void makeShooter(loc template=errorEnemies, loc show=showeyDef,
 @doc {
 	Set up the game scene as a platformer with falling branches and collectables and launch.
 }
-public void makePlatformer(loc template=branchJumper, loc show=showeyDef, 
+public void makePlatformer(loc template=branchJumper, loc show=|project://Puzzle/src/Puzzle/Shows/BranchJumper.show|, 
 												list[value] ins=[], list[value] eout=[]) {
 	writeFile(solution, readFile(template));
 	showeyDef = show;

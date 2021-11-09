@@ -5,7 +5,7 @@
 // For instance the next IF statement will create a branch that will not be executed
 if (false)
 	// Branch 0
-	number never
+	bool isNeverExecutedSinceConditionIsFalse
 end if 
 
 // The condition can be more tricky however

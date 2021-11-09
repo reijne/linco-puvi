@@ -8,6 +8,7 @@ iterator <- 0
 
 while (iterator < 5)
 	output(iterator)
+	iterator <- iterator + 1
 end while
 
 // Be very careful with while(true), this will loop forever and will crash!
