@@ -13,5 +13,6 @@ See the [Visual Library](https://github.com/snipy123/codeVisuals):
 + Blocky - 3D artefact creation
 + Showey - Code visualisation creation
 + Sceney - Live interactive visualisation application 
++ Socketeer - TCP server to create or update visuals
 
 This Framework requires [Rascal](https://www.rascal-mpl.org/start/)
