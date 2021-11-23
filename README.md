@@ -10,8 +10,8 @@ Features:
 Visual components are integrated in build and available through API 
 
 See the [Visual Library](https://github.com/snipy123/codeVisuals):
-+ 3D artefact creation
-+ Code visualisation creation
-+ Live interactive visualisation application 
++ Blocky - 3D artefact creation
++ Showey - Code visualisation creation
++ Sceney - Live interactive visualisation application 
 
 This Framework requires [Rascal](https://www.rascal-mpl.org/start/)
