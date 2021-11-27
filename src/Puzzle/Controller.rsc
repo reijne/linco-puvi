@@ -219,9 +219,9 @@ private void manualSequence() {
 		//println(typeOf(util::IDEServices::edit));
 		//edit(codeloc);
 		print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
-					'Click here for the Highlight :: <codeloc>");
+					'<codeloc>");
 		int starter = realTime();
-		while(starter + 1000 > realTime()) {
+		while(starter + 2000 > realTime()) {
 			print("");
 		}
 	}
@@ -324,10 +324,11 @@ public void makePlatformer(loc template=branchJumper, loc show=|project://Puzzle
 	gameType = "platformer";
 }
 
-// Make multiwple choice puzzle
+// Make multiple choice puzzle
 public void multipleChoicePuzzle() {
 	ins = [1, 2];
 	eout = ["A"];
+	showeyDef = |project://Puzzle/src/Puzzle/Shows/Puzzle.show|;
 	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Choice.sly|));
 	setup(ins, eout);
 	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);
@@ -341,6 +342,7 @@ public void multipleChoicePuzzle() {
 public void orderingPuzzle() {
 	ins = [8, 13];
 	eout = [5, 3, 2, 1, 1, 0];
+	showeyDef = |project://Puzzle/src/Puzzle/Shows/Puzzle.show|;
 	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Order.sly|));
 	setup(ins, eout);
 	updateMessage("Fly around and look for clues... \n Then solve the coding puzzle.\n", 4.0);

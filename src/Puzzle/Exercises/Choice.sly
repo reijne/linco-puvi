@@ -15,21 +15,22 @@ newlow <- low
 
 // OPTION A
 while(newlow > 0)
-	newlow <- high - low
 	high <- low
 	low <- newlow	
+	newlow <- high - low
 end while
 // END OPTION A
 
 // OPTION B
-while(newlow > 0)
-	high <- low
-	low <- newlow	
-	newlow <- high - low
-end while
+//while(newlow > 0)
+//	newlow <- high - low
+//	high <- low
+//	low <- newlow	
+//end while
 // END OPTION B
 
 // Uncomment the option, which you think is correct and explain why in comments
+output("CHOICE") 
 // output("A")
 // output("B")
 
