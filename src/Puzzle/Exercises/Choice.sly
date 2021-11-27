@@ -29,9 +29,7 @@ end while
 //end while
 // END OPTION B
 
-// Uncomment the option, which you think is correct and explain why in comments
-output("CHOICE") 
-// output("A")
-// output("B")
+// Choose the option which you think is correct and explain why in comments
+output("CHOICE") // "CHOICE" | "A" | "B"
 
 // Option .. is correct, because ..

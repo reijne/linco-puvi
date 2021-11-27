@@ -327,7 +327,7 @@ public void makePlatformer(loc template=branchJumper, loc show=|project://Puzzle
 // Make multiple choice puzzle
 public void multipleChoicePuzzle() {
 	ins = [1, 2];
-	eout = ["A"];
+	eout = ["B"];
 	showeyDef = |project://Puzzle/src/Puzzle/Shows/Puzzle.show|;
 	writeFile(solution, readFile(|project://Puzzle/src/Puzzle/Exercises/Choice.sly|));
 	setup(ins, eout);
