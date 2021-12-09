@@ -1,10 +1,13 @@
-// You are in charge of determining who is admissible to the youth club YC.
-// To do this there are two input variables: the name and age of a person.
-// The third input variable determines what the age limit is for the club.
-// 	1. Your job is to assign the right value to the variable: is_old
-// 	2. Error Enemies Game :: Fix all the errors in the code!
+// The Youth club is accepting new members!
+// You are the Youth club admission officer.
+// Only people below the age limit can join.
+// You are responsible for the code that determines who is admissible.
+// You receive the name and age of a person.
+// The third input variable determines the age limit for the club.
+// Your job is to assign the right value to the variable: is old
+// Error Enemies Game :: Fix all the errors in the code!
 /// START by typing your name and saving the file!
-/// NAME :: 
+/// NAME ::
 
 string name
 number age
@@ -20,7 +23,10 @@ bool is_old
 is_old <- true + false
 
 if (is_old)
-	name <- name + "-is too old"
+		name <- name + "-is too old"
 end if
 
 output(name)
+
+
+

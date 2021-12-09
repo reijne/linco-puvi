@@ -1,0 +1,11 @@
+// DEMO Positive check puzzle
+// You have to determine whether the number "check" is positive
+// output "positive" if it passes the threshold,
+// otherwise output number itself.
+
+number check
+check <- input()
+
+// >> Start of Solution <<
+
+

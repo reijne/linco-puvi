@@ -325,7 +325,7 @@ public void makePlatformer(loc template=branchJumper, loc show=|project://Puzzle
 }
 
 // Make multiple choice puzzle
-public void multipleChoicePuzzle() {
+public void makeMultipleChoicePuzzle() {
 	ins = [1, 2];
 	eout = ["B"];
 	showeyDef = |project://Puzzle/src/Puzzle/Shows/Puzzle.show|;
@@ -339,7 +339,7 @@ public void multipleChoicePuzzle() {
 // Make ordering puzzle 
 // Order the sections to fix errors / make the visualisation show something
 // Make multiple choice puzzle
-public void orderingPuzzle() {
+public void makeOrderingPuzzle() {
 	ins = [8, 13];
 	eout = [5, 3, 2, 1, 1, 0];
 	showeyDef = |project://Puzzle/src/Puzzle/Shows/Puzzle.show|;

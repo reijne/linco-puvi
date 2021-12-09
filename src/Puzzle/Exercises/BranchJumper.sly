@@ -1,7 +1,8 @@
 // In this code puzzle you are the branch detective.
-// You have to figure out which branches are being executed.
+// A branch is a piece of code that is executed depending on a condition.
+// You have to find out which branch will be executed.
+// Output this branch at the end of the code.
 
-// We call a branch a piece of code that is executed depending on a condition
 // For instance the next IF statement will create a branch that will not be executed
 if (false)
 	// Branch 0
@@ -31,3 +32,4 @@ end if
 
 // Now it is up to you to output which branch is being executed
 output(0)
+
